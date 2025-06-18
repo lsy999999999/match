@@ -131,5 +131,5 @@ def ask_gpt_api_call(prompt):
 
 if __name__=='__main__':
     # 示例使用
-    result, log = ask_gpt(man_score=[25, 30, 'Programmer', 70, 80, 90, 60, 70, 80, 15, 15, 20, 30, 10, 10])
+    result, log = ask_gpt_random(man_score=[25, 30, 'Programmer', 70, 80, 90, 60, 70, 80, 15, 15, 20, 30, 10, 10])
     # print(result)

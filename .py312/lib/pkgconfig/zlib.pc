@@ -1,0 +1,13 @@
+prefix=/home/lsy/match/.py312
+exec_prefix=/home/lsy/match/.py312
+libdir=/home/lsy/match/.py312/lib
+sharedlibdir=/home/lsy/match/.py312/lib
+includedir=/home/lsy/match/.py312/include
+
+Name: zlib
+Description: zlib compression library
+Version: 1.2.13
+
+Requires:
+Libs: -L${libdir} -L${sharedlibdir} -lz
+Cflags: -I${includedir}
