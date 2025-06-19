@@ -28,17 +28,22 @@ fs1     {
 	}
 }
 END XLC_FONTSET
+
 # 
 # 	XLC_XLOCALE category
 # 
 XLC_XLOCALE
+
 encoding_name		zh_HK.Big5
 mb_cur_max		2
 state_depend_encoding	False
+
 wc_encoding_mask	\x00008000
 wc_shift_bits		8
+
 use_stdc_env		True
 force_convert_to_mb	True
+
 # 	cs0 class
 cs0	{
 	side		GL:Default
@@ -46,15 +51,19 @@ cs0	{
 	wc_encoding	\x00000000
 	ct_encoding	ISO8859-1:GL
 }
+
 # 	cs1 class
 cs1	{
 	side		none
 	length		2
 	byte1		\xa1,\xf9
 	byte2		\x40,\x7e;\xa1,\xfe
+
 	wc_encoding	\x00008000
 	ct_encoding	BIG5-0:GLGR:\x1b\x25\x2f\x32\x80\x89\x42\x49\x47\x35\x2d\x30\x02
+
 	mb_conversion	[\xa140,\xf9fe]->\x2140
 	ct_conversion	[\x2140,\x79fe]->\xa140
 }
+
 END XLC_XLOCALE

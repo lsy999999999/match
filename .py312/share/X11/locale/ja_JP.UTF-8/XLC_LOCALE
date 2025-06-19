@@ -1,10 +1,14 @@
 # 
+
 # 
 # 	XLC_FONTSET category
 # 
 XLC_FONTSET
+
 on_demand_loading	True
+
 object_name		generic
+
 # We leave the legacy encodings in for the moment, because we don't
 # have that many ISO10646 fonts yet.
 #   fs0 class (7 bit ASCII)
@@ -26,6 +30,7 @@ fs1 {
     primary ISO8859-1:GR
   }
 }
+
 # 	fs2 class (Kanji)
 fs2	{
 	charset	{
@@ -35,6 +40,7 @@ fs2	{
 		primary	JISX0208.1983-0:GL
 	}
 }
+
 #   fs3 class (Korean Character)
 fs3	{
 	charset	{
@@ -44,6 +50,7 @@ fs3	{
 		primary	KSC5601.1987-0:GL
 	}
 }
+
 #   fs4 class (Chinese Han Character)
 fs4	{
 	charset	{
@@ -67,6 +74,7 @@ fs5	{
 # other fonts are picked up before iso10646-1 fonts.
 # Moreover, some iso10646-1 fonts don't have any glyph at all
 # in ISO8859-X ranges.
+
 # fs6 class
 fs6 {
   charset {
@@ -76,37 +84,46 @@ fs6 {
     primary ISO10646-1
   }
 }
+
 END XLC_FONTSET
+
 # 
 # 	XLC_XLOCALE category
 # 
 XLC_XLOCALE
+
 encoding_name		UTF-8
 mb_cur_max		6
 state_depend_encoding	False
+
 #	cs0 class
 cs0	{
 	side		GL:Default
 	length		1
 	ct_encoding	ISO8859-1:GL
 }
+
 #	cs1 class
 cs1     {
         side            GR:Default
         length          1
         ct_encoding     ISO8859-1:GR
 }
+
 #	cs2 class
 cs2	{
 	side		GR
 	length		2
 	ct_encoding	JISX0208.1983-0:GL; JISX0208.1983-0:GR;			JISX0208.1983-1:GL; JISX0208.1983-1:GR
+
 }
+
 #	cs3 class
 cs3     {
         side            GL
         length          2
         ct_encoding     KSC5601.1987-0:GL; KSC5601.1987-0:GR;                        KSC5601.1987-1:GL; KSC5601.1987-1:GR
+
 }
  
 #	cs4 class
@@ -122,9 +139,11 @@ cs5	{
 	length		1
 	ct_encoding	JISX0201.1976-0:GR
 }
+
 #	cs6 class
 cs6	{
 	side		none
 	ct_encoding	ISO10646-1
 }
+
 END XLC_XLOCALE

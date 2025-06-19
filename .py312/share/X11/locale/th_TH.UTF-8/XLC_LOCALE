@@ -1,7 +1,8 @@
 # XLocale Database Sample for th_TH
 #
 #
-# Modified from original th_TH.TACTIS
+# Modified from origial th_TH.TACTIS
+
 # 
 # 	XLC_FONTSET category
 # 
@@ -28,17 +29,29 @@ fs2	{
 	font            ISO8859-11:GR
 }
 END XLC_FONTSET
+
 # 
 # 	XLC_XLOCALE category
 # 
 XLC_XLOCALE
+
 encoding_name           UTF-8
 mb_cur_max		3
 state_depend_encoding	False
+
+
 wc_encoding_mask	\x30000000
 wc_shift_bits		7
+
+
+
+
+
+
 use_stdc_env            True
 force_convert_to_mb     True
+
+
 # 	cs0 class
 cs0	{
 	side		GL:Default
@@ -46,16 +59,21 @@ cs0	{
 	wc_encoding	\x00000000
 	ct_encoding     ISO8859-1:GL
 }
+
+
 # 	cs1 class
 cs1	{
 	side		GR:Default
 	length		1
+
 	wc_encoding	\x30000000
 	ct_encoding     ISO8859-11:GR
 }
+
 # 	cs2 class
 cs2	{
 	side		none
 	ct_encoding     ISO10646-1
 }
+
 END XLC_XLOCALE

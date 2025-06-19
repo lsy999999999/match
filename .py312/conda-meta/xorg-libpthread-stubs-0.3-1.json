@@ -1,0 +1,40 @@
+{
+  "build": "1",
+  "build_number": 1,
+  "channel": "https://conda.anaconda.org/conda-forge/linux-64",
+  "constrains": [],
+  "depends": [],
+  "extracted_package_dir": "/home/lsy/anaconda3/pkgs/xorg-libpthread-stubs-0.3-1",
+  "files": [
+    "lib/pkgconfig/pthread-stubs.pc"
+  ],
+  "fn": "xorg-libpthread-stubs-0.3-1.tar.bz2",
+  "license": "MIT",
+  "link": {
+    "source": "/home/lsy/anaconda3/pkgs/xorg-libpthread-stubs-0.3-1",
+    "type": 1
+  },
+  "md5": "ba181a195384844e4e5d1f4d2a8fe885",
+  "name": "xorg-libpthread-stubs",
+  "package_tarball_full_path": "/home/lsy/anaconda3/pkgs/xorg-libpthread-stubs-0.3-1.tar.bz2",
+  "paths_data": {
+    "paths": [
+      {
+        "_path": "lib/pkgconfig/pthread-stubs.pc",
+        "file_mode": "text",
+        "path_type": "hardlink",
+        "prefix_placeholder": "/opt/anaconda1anaconda2anaconda3",
+        "sha256": "9ce637c8a9c65d1287a6a0aa7a1dc0a65810fe8811403f2247afdaf671a1c5db",
+        "sha256_in_prefix": "7196d904cef06cdbb521b18894dcce5efbc4f2a2bf5d08324a7422019079c2a3",
+        "size_in_bytes": 197
+      }
+    ],
+    "paths_version": 1
+  },
+  "requested_spec": "None",
+  "sha256": "3c235f829419e12ae0b1c6bf2c2da692c65b8d497be09ecd6eb666a9cf45f0de",
+  "size": 4164,
+  "subdir": "linux-64",
+  "url": "https://conda.anaconda.org/conda-forge/linux-64/xorg-libpthread-stubs-0.3-1.tar.bz2",
+  "version": "0.3"
+}

@@ -3,6 +3,7 @@
 #     modified from xc/nls/XLC_LOCALE/zh_TW.Big5
 #     by Sean Chen <seanc@turbolinux.com>
 # 
+
 # 
 # 	XLC_FONTSET category
 # 
@@ -28,17 +29,22 @@ fs1     {
         }
 }
 END XLC_FONTSET
+
 # 
 # 	XLC_XLOCALE category
 # 
 XLC_XLOCALE
+
 encoding_name		zh_CN.GBK
 mb_cur_max		2
 state_depend_encoding	False
+
 wc_encoding_mask	\x00008000
 wc_shift_bits		8
+
 use_stdc_env		True
 force_convert_to_mb	True
+
 # 	cs0 class
 cs0	{
 	side		GL:Default
@@ -46,15 +52,19 @@ cs0	{
 	wc_encoding	\x00000000
 	ct_encoding	ISO8859-1:GL
 }
+
 # 	cs1 class
 cs1	{
 	side		none
 	length		2
 	byte1		\x81,\xfe
 	byte2		\x40,\x7e;\x80,\xfe
+
 	wc_encoding	\x00008000
 	ct_encoding	GBK-0:GLGR:\x1b\x25\x2f\x32
+
 	mb_conversion	[\x8140,\xfefe]->\x0140
 	ct_conversion	[\x0140,\x7efe]->\x8140
 }
+
 END XLC_XLOCALE

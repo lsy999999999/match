@@ -9,6 +9,7 @@
 # X11R6 organization of fsN/csN as it is and only changed "CNS11643-*"
 # to "CNS11643.1986-*".
 #	1995-10-24	T. Numata (numa@rp.open.cs.fujitsu.co.jp)
+
 # 
 # 	XLC_FONTSET category
 # 
@@ -69,17 +70,21 @@ fs5	{
 	}
 }
 END XLC_FONTSET
+
 # 
 # 	XLC_XLOCALE category
 # 
 XLC_XLOCALE
+
 encoding_name		zh_TW.euc
 mb_cur_max		4
 state_depend_encoding	False
 wc_encoding_mask	\x3fffc000
 wc_shift_bits		7
+
 use_stdc_env		True
 force_convert_to_mb	True
+
 # 	cs0 class
 cs0	{
 	side		GL:Default
@@ -87,6 +92,7 @@ cs0	{
 	wc_encoding	\x00000000
 	ct_encoding	ISO8859-1:GL; CNS11643.1986-0:GL
 }
+
 # 	cs1 class
 cs1	{
 	side		GR:Default
@@ -94,6 +100,7 @@ cs1	{
 	wc_encoding	\x30000000
 	ct_encoding	CNS11643.1986-1:GR
 }
+
 # 	cs2 class	# plane 2
 cs2	{
 	side		GR
@@ -102,6 +109,7 @@ cs2	{
 	wc_encoding	\x10088000
 	ct_encoding	CNS11643.1986-2:GR
 }
+
 # 	cs3 class	# plane 14
 cs3	{
 	side		GR
@@ -110,6 +118,7 @@ cs3	{
 	wc_encoding	\x100b8000
 	ct_encoding	CNS11643.1986-14:GR
 }
+
 # 	cs4 class	# plane 15
 cs4	{
 	side		GR
@@ -118,6 +127,7 @@ cs4	{
 	wc_encoding	\x100bc000
 	ct_encoding	CNS11643.1986-15:GR
 }
+
 # 	cs5 class	# plane 16
 cs5	{
 	side		GR
@@ -126,4 +136,5 @@ cs5	{
 	wc_encoding	\x100c0000
 	ct_encoding	CNS11643.1986-16:GR
 }
+
 END XLC_XLOCALE

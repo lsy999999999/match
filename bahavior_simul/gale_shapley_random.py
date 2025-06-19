@@ -140,7 +140,7 @@ def log_text(logfile, logtext):
 
 
 if __name__=='__main__':
-  for i in range(1,2):
+  for i in range(1,50):
     # for _ in range(5):
     l1,l2 = read_file(r'/home/lsy/match/dataset/save_merge_select_null_3.xlsx', i)
     dict1, dict2 = read_file_attr(r'/home/lsy/match/dataset/save_merge_select_null_3.xlsx', i)

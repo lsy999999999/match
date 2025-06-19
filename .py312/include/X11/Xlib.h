@@ -50,8 +50,12 @@ in this Software without prior written authorization from The Open Group.
 #ifndef X_WCHAR
 #include <stddef.h>
 #else
+#ifdef __UNIXOS2__
+#include <stdlib.h>
+#else
 /* replace this with #include or typedef appropriate for your system */
 typedef unsigned long wchar_t;
+#endif
 #endif
 
 
@@ -185,11 +189,11 @@ typedef struct {
 				   CapRound, CapProjecting */
 	int join_style;	 	/* JoinMiter, JoinRound, JoinBevel */
 	int fill_style;	 	/* FillSolid, FillTiled,
-				   FillStippled, FillOpaqueStippled */
+				   FillStippled, FillOpaeueStippled */
 	int fill_rule;	  	/* EvenOddRule, WindingRule */
 	int arc_mode;		/* ArcChord, ArcPieSlice */
 	Pixmap tile;		/* tile pixmap for tiling operations */
-	Pixmap stipple;		/* stipple 1 plane pixmap for stippling */
+	Pixmap stipple;		/* stipple 1 plane pixmap for stipping */
 	int ts_x_origin;	/* offset for tile or stipple operations */
 	int ts_y_origin;
         Font font;	        /* default text font for text operations */
@@ -291,7 +295,7 @@ typedef struct {
     int bit_gravity;		/* one of bit gravity values */
     int win_gravity;		/* one of the window gravity values */
     int backing_store;		/* NotUseful, WhenMapped, Always */
-    unsigned long backing_planes;/* planes to be preserved if possible */
+    unsigned long backing_planes;/* planes to be preseved if possible */
     unsigned long backing_pixel;/* value to use in restoring planes */
     Bool save_under;		/* should bits under be saved? (popups) */
     long event_mask;		/* set of events that should be saved */
@@ -363,9 +367,9 @@ typedef struct _XImage {
     int bitmap_bit_order;	/* LSBFirst, MSBFirst */
     int bitmap_pad;		/* 8, 16, 32 either XY or ZPixmap */
     int depth;			/* depth of image */
-    int bytes_per_line;		/* accelerator to next line */
+    int bytes_per_line;		/* accelarator to next line */
     int bits_per_pixel;		/* bits per pixel (ZPixmap) */
-    unsigned long red_mask;	/* bits in z arrangement */
+    unsigned long red_mask;	/* bits in z arrangment */
     unsigned long green_mask;
     unsigned long blue_mask;
     XPointer obdata;		/* hook for the object routines to hang on */
@@ -1731,10 +1735,6 @@ extern Status XInitThreads(
     void
 );
 
-extern Status XFreeThreads(
-    void
-);
-
 extern void XLockDisplay(
     Display*		/* display */
 );
@@ -1858,16 +1858,6 @@ extern XIOErrorHandler XSetIOErrorHandler (
     XIOErrorHandler	/* handler */
 );
 
-typedef void (*XIOErrorExitHandler) ( /* WARNING, this type not in Xlib spec */
-    Display*,		/* display */
-    void*		/* user_data */
-);
-
-extern void XSetIOErrorExitHandler (
-    Display*,			/* display */
-    XIOErrorExitHandler,	/* handler */
-    void*			/* user_data */
-);
 
 extern XPixmapFormatValues *XListPixmapFormats(
     Display*		/* display */,

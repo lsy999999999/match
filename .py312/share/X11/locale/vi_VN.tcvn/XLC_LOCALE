@@ -1,5 +1,6 @@
 #  XLocale Database Sample for vi_VN.TCVN
 # 
+
 # 
 # 	XLC_FONTSET category
 # 
@@ -20,6 +21,7 @@ fs1	{
 	font            TCVN-5712:GR
 }
 END XLC_FONTSET
+
 #
 #	XLC_CHARSET_DEFINE category
 #
@@ -32,16 +34,25 @@ csd0	{
 	sequence	\x1b%/1
 }
 END XLC_CHARSET_DEFINE
+
 # 
 # 	XLC_XLOCALE category
 # 
 XLC_XLOCALE
+
 encoding_name           TCVN-5712
 mb_cur_max		1
 state_depend_encoding	False
+
 wc_encoding_mask	\x30000000
 wc_shift_bits		7
+
+
+
+
+
 use_stdc_env		True
+
 # 	cs0 class
 cs0	{
 	side		GL:Default
@@ -49,11 +60,18 @@ cs0	{
 	wc_encoding	\x00000000
 	ct_encoding     TCVN-5712:GL; ISO8859-1:GL
 }
+
+
 # 	cs1 class
 cs1	{
 	side		GR:Default
 	length		1
+
 	wc_encoding	\x30000000
+
+
+
 	ct_encoding     TCVN-5712:GR
 }
+
 END XLC_XLOCALE

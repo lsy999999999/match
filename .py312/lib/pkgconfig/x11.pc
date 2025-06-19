@@ -7,8 +7,7 @@ xthreadlib=-lpthread
 
 Name: X11
 Description: X Library
-URL: https://gitlab.freedesktop.org/xorg/lib/libx11/
-Version: 1.8.12
+Version: 1.6.4
 Requires: xproto kbproto
 Requires.private: xcb >= 1.11.1
 Cflags: -I${includedir} 

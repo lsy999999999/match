@@ -84,6 +84,7 @@
 <Multi_key> <r> <0>			: "\256"	registered
 <Multi_key> <0> <R>			: "\256"	registered
 <Multi_key> <0> <r>			: "\256"	registered
+
 # Accented Alphabet
 <Multi_key> <A> <grave>			: "\300"	Agrave
 <Multi_key> <grave> <A>			: "\300"	Agrave
@@ -280,6 +281,7 @@
 <Multi_key> <quotedbl> <y>		: "\377"	ydiaeresis
 <Multi_key> <y> <diaeresis>		: "\377"	ydiaeresis
 <Multi_key> <diaeresis> <y>		: "\377"	ydiaeresis
+
 #
 # dead key accent keysyms
 # Special Character
@@ -288,6 +290,7 @@
 <dead_acute> <space>			: "'"	apostrophe
 <dead_circumflex> <space>		: "^"	asciicircum
 <dead_tilde> <space>			: "~"	asciitilde
+
 # Accented Alphabet
 <dead_grave> <A>			: "\300"	Agrave
 <dead_acute> <A>			: "\301"	Aacute
@@ -340,8 +343,11 @@
 <dead_acute> <Y>			: "\335"	Yacute
 <dead_acute> <y>			: "\375"	yacute
 <dead_diaeresis> <y>			: "\377"	ydiaeresis
+
+
 # The following is Celtic character support,
 # i.e. the characters in 8859-14 which differ from 8859-1.
+
 <Multi_key> <period> <b>		: "\242"	babovedot
 <Multi_key> <period> <B>		: "\241"	Babovedot
 <Multi_key> <period> <c>		: "\245"	cabovedot
@@ -360,6 +366,7 @@
 <Multi_key> <period> <S>		: "\273"	Sabovedot
 <Multi_key> <period> <t>		: "\367"	tabovedot
 <Multi_key> <period> <T>		: "\327"	Tabovedot
+
 <Multi_key> <b> <period> 		: "\242"	babovedot
 <Multi_key> <B> <period> 		: "\241"	Babovedot
 <Multi_key> <c> <period> 		: "\245"	cabovedot
@@ -378,18 +385,22 @@
 <Multi_key> <S> <period> 		: "\273"	Sabovedot
 <Multi_key> <t> <period> 		: "\367"	tabovedot
 <Multi_key> <T> <period> 		: "\327"	Tabovedot
+
 <Multi_key> <y> <asciicircum>		: "\376"	ycircumflex
 <Multi_key> <asciicircum> <y>		: "\376"	ycircumflex
 <Multi_key> <Y> <asciicircum>		: "\336"	Ycircumflex
 <Multi_key> <asciicircum> <Y>		: "\336"	Ycircumflex
+
 <Multi_key> <w> <asciicircum>		: "\360"	wcircumflex
 <Multi_key> <asciicircum> <w>		: "\360"	wcircumflex
 <Multi_key> <W> <asciicircum>		: "\320"	Wcircumflex
 <Multi_key> <asciicircum> <W>		: "\320"	Wcircumflex
+
 <Multi_key> <Y> <quotedbl>		: "\257"	Ydiaeresis
 <Multi_key> <quotedbl> <Y>		: "\257"	Ydiaeresis
 <Multi_key> <Y> <diaeresis>		: "\257"	Ydiaeresis
 <Multi_key> <diaeresis> <Y>		: "\257"	Ydiaeresis
+
 <Multi_key> <W> <quotedbl>		: "\275"	Wdiaeresis
 <Multi_key> <quotedbl> <W>		: "\275"	Wdiaeresis
 <Multi_key> <W> <diaeresis>		: "\275"	Wdiaeresis
@@ -398,14 +409,17 @@
 <Multi_key> <quotedbl> <w>		: "\276"	wdiaeresis
 <Multi_key> <w> <diaeresis>		: "\276"	wdiaeresis
 <Multi_key> <diaeresis> <w>		: "\276"	wdiaeresis
+
 <Multi_key> <Y> <grave>			: "\254"	Ygrave
 <Multi_key> <grave> <Y>			: "\254"	Ygrave
 <Multi_key> <y> <grave>			: "\274"	ygrave
 <Multi_key> <grave> <y>			: "\274"	ygrave
+
 <Multi_key> <W> <grave>			: "\250"	Wgrave
 <Multi_key> <grave> <W>			: "\250"	Wgrave
 <Multi_key> <w> <grave>			: "\270"	wgrave
 <Multi_key> <grave> <w>			: "\270"	wgrave
+
 <Multi_key> <W> <apostrophe>		: "\252"	Wacute
 <Multi_key> <apostrophe> <W>		: "\252"	Wacute
 <Multi_key> <W> <acute>			: "\252"	Wacute
@@ -414,6 +428,7 @@
 <Multi_key> <apostrophe> <w>		: "\272"	wacute
 <Multi_key> <w> <acute>			: "\272"	wacute
 <Multi_key> <acute> <w>			: "\272"	wacute
+
 <dead_abovedot> <b>			: "\242"	babovedot
 <dead_abovedot> <B>			: "\241"	Babovedot
 <dead_abovedot> <c>			: "\245"	cabovedot
@@ -432,6 +447,7 @@
 <dead_abovedot> <S>			: "\273"	Sabovedot
 <dead_abovedot> <t>			: "\367"	tabovedot
 <dead_abovedot> <T>			: "\327"	Tabovedot
+
 <dead_circumflex>  <b>			: "\242"	babovedot
 <dead_circumflex>  <B>			: "\241"	Babovedot
 <dead_circumflex>  <c>			: "\245"	cabovedot
@@ -450,6 +466,7 @@
 <dead_circumflex>  <S>			: "\273"	Sabovedot
 <dead_circumflex>  <t>			: "\367"	tabovedot
 <dead_circumflex>  <T>			: "\327"	Tabovedot
+
 <dead_acute>  <b>			: "\242"	babovedot
 <dead_acute>  <B>			: "\241"	Babovedot
 <dead_acute>  <c>			: "\245"	cabovedot
@@ -468,17 +485,25 @@
 <dead_acute>  <S>			: "\273"	Sabovedot
 <dead_acute>  <t>			: "\367"	tabovedot
 <dead_acute>  <T>			: "\327"	Tabovedot
+
 <dead_diaeresis> <Y>			: "\257"	Ydiaeresis
+
 <dead_grave> <Y>			: "\254"	Ygrave
 <dead_grave> <y>			: "\274"	ygrave
+
 <dead_circumflex> <y>			: "\376"	ycircumflex
 <dead_circumflex> <Y>			: "\336"	Ycircumflex
+
 <dead_circumflex> <w>			: "\360"	wcircumflex
 <dead_circumflex> <W>			: "\320"	Wcircumflex
+
 <dead_diaeresis> <w>			: "\276"	wdiaeresis
 <dead_diaeresis> <W>			: "\275"	Wdiaeresis
+
 <dead_acute> <w>			: "\272"	wacute
 <dead_acute> <W>			: "\252"	Wacute
+
 <dead_grave> <W>			: "\250"	Wgrave
 <dead_grave> <w>			: "\270"	wgrave
+
 # End of Sequence Definition

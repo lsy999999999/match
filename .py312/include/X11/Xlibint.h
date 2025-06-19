@@ -43,10 +43,6 @@ from The Open Group.
 #include <X11/Xproto.h>		/* to declare xEvent */
 #include <X11/XlibConf.h>	/* for configured options like XTHREADS */
 
-#ifdef XTHREADS
-#include <X11/Xthreads.h>
-#endif
-
 /* The Xlib structs are full of implicit padding to properly align members.
    We can't clean that up without breaking ABI, so tell clang not to bother
    complaining about it. */
@@ -206,15 +202,6 @@ struct _XDisplay
 	unsigned long last_request_read_upper32bit;
 	unsigned long request_upper32bit;
 #endif
-
-	struct _XErrorThreadInfo *error_threads;
-
-	XIOErrorExitHandler exit_handler;
-	void *exit_handler_data;
-	CARD32 in_ifevent;
-#ifdef XTHREADS
-	xthread_t ifevent_thread;
-#endif
 };
 
 #define XAllocIDs(dpy,ids,n) (*(dpy)->idlist_alloc)(dpy,ids,n)
@@ -340,6 +327,9 @@ typedef struct _XSQEvent
 #endif
 
 #include <X11/Xproto.h>
+#ifdef __sgi
+#define _SGI_MP_SOURCE  /* turn this on to get MP safe errno */
+#endif
 #include <errno.h>
 #define _XBCOPYFUNC _Xbcopy
 #include <X11/Xfuncs.h>
@@ -432,8 +422,8 @@ extern LockInfoPtr _Xglobal_lock;
 #define _XLockMutex(lock)		if (_XLockMutex_fn) (*_XLockMutex_fn)(lock)
 #define _XUnlockMutex(lock)	if (_XUnlockMutex_fn) (*_XUnlockMutex_fn)(lock)
 #endif
-#define _XCreateMutex(lock)	if (_XCreateMutex_fn) (*_XCreateMutex_fn)(lock)
-#define _XFreeMutex(lock)	if (_XFreeMutex_fn) (*_XFreeMutex_fn)(lock)
+#define _XCreateMutex(lock)	if (_XCreateMutex_fn) (*_XCreateMutex_fn)(lock);
+#define _XFreeMutex(lock)	if (_XFreeMutex_fn) (*_XFreeMutex_fn)(lock);
 
 #else /* XTHREADS */
 #define LockDisplay(dis)
@@ -454,15 +444,15 @@ extern LockInfoPtr _Xglobal_lock;
  */
 #if defined(MALLOC_0_RETURNS_NULL) || defined(__clang_analyzer__)
 
-# define Xmalloc(size) malloc((size_t)((size) == 0 ? 1 : (size)))
-# define Xrealloc(ptr, size) realloc((ptr), (size_t)((size) == 0 ? 1 : (size)))
-# define Xcalloc(nelem, elsize) calloc((size_t)((nelem) == 0 ? 1 : (nelem)), (size_t)(elsize))
+# define Xmalloc(size) malloc(((size) == 0 ? 1 : (size)))
+# define Xrealloc(ptr, size) realloc((ptr), ((size) == 0 ? 1 : (size)))
+# define Xcalloc(nelem, elsize) calloc(((nelem) == 0 ? 1 : (nelem)), (elsize))
 
 #else
 
-# define Xmalloc(size) malloc((size_t)(size))
-# define Xrealloc(ptr, size) realloc((ptr), (size_t)(size))
-# define Xcalloc(nelem, elsize) calloc((size_t)(nelem), (size_t)(elsize))
+# define Xmalloc(size) malloc((size))
+# define Xrealloc(ptr, size) realloc((ptr), (size))
+# define Xcalloc(nelem, elsize) calloc((nelem), (elsize))
 
 #endif
 
@@ -564,7 +554,7 @@ extern void *_XGetRequest(Display *dpy, CARD8 type, size_t len);
 
 #define GetResReq(name, rid, req) \
 	req = (xResourceReq *) _XGetRequest(dpy, X_##name, SIZEOF(xResourceReq)); \
-	if (req) req->id = (rid)
+	req->id = (rid)
 
 /*
  * GetEmptyReq is for those requests that have no arguments
@@ -586,11 +576,11 @@ extern void *_XGetRequest(Display *dpy, CARD8 type, size_t len);
 #define MakeBigReq(req,n) \
     { \
     CARD64 _BRdat; \
-    CARD32 _BRlen = (CARD32) (req->length - 1); \
+    CARD32 _BRlen = req->length - 1; \
     req->length = 0; \
     _BRdat = ((CARD32 *)req)[_BRlen]; \
     memmove(((char *)req) + 8, ((char *)req) + 4, (_BRlen - 1) << 2); \
-    ((CARD32 *)req)[1] = _BRlen + (CARD32) (n) + 2; \
+    ((CARD32 *)req)[1] = _BRlen + n + 2; \
     Data32(dpy, &_BRdat, 4); \
     }
 #else
@@ -601,7 +591,7 @@ extern void *_XGetRequest(Display *dpy, CARD8 type, size_t len);
     req->length = 0; \
     _BRdat = ((CARD32 *)req)[_BRlen]; \
     memmove(((char *)req) + 8, ((char *)req) + 4, (_BRlen - 1) << 2); \
-    ((CARD32 *)req)[1] = _BRlen + (CARD32) (n) + 2; \
+    ((CARD32 *)req)[1] = _BRlen + n + 2; \
     Data32(dpy, &_BRdat, 4); \
     }
 #endif
@@ -620,10 +610,10 @@ extern void *_XGetRequest(Display *dpy, CARD8 type, size_t len);
 	    MakeBigReq(req,n) \
 	} else { \
 	    n = badlen; \
-	    req->length = (CARD16) (req->length + n); \
+	    req->length += n; \
 	} \
     } else \
-	req->length = (CARD16) (req->length + n)
+	req->length += n
 #else
 #define SetReqLen(req,n,badlen) \
     req->length += n
@@ -644,13 +634,13 @@ extern void _XFlushGCCache(Display *dpy, GC gc);
  * "len" is the length of the data buffer.
  */
 #ifndef DataRoutineIsProcedure
-#define Data(dpy, data, len) do {\
+#define Data(dpy, data, len) {\
 	if (dpy->bufptr + (len) <= dpy->bufmax) {\
-		memcpy(dpy->bufptr, data, (size_t)(len));\
-		dpy->bufptr += ((size_t)((len) + 3) & (size_t)~3);\
+		memcpy(dpy->bufptr, data, (int)len);\
+		dpy->bufptr += ((len) + 3) & ~3;\
 	} else\
-		_XSend(dpy, (_Xconst char*)(data), (long)(len));\
-} while (0)
+		_XSend(dpy, data, len);\
+}
 #endif /* DataRoutineIsProcedure */
 
 
@@ -668,31 +658,30 @@ extern void _XFlushGCCache(Display *dpy, GC gc);
  *    BufAlloc (xTextElt *, elt, nbytes)
  */
 
-#define BufAlloc(type, ptr, n) do {      \
+#define BufAlloc(type, ptr, n) \
     if (dpy->bufptr + (n) > dpy->bufmax) \
         _XFlush (dpy); \
     ptr = (type) dpy->bufptr; \
-    memset(ptr, '\0', (size_t)(n)); \
-    dpy->bufptr += (n); \
-} while (0)
+    memset(ptr, '\0', n); \
+    dpy->bufptr += (n);
 
 #define Data16(dpy, data, len) Data((dpy), (_Xconst char *)(data), (len))
 #define _XRead16Pad(dpy, data, len) _XReadPad((dpy), (char *)(data), (len))
 #define _XRead16(dpy, data, len) _XRead((dpy), (char *)(data), (len))
 #ifdef LONG64
-#define Data32(dpy, data, len) _XData32(dpy, (_Xconst long *)(data), (unsigned)(len))
+#define Data32(dpy, data, len) _XData32(dpy, (_Xconst long *)data, len)
 extern int _XData32(
 	     Display *dpy,
-	     _Xconst long *data,
+	     register _Xconst long *data,
 	     unsigned len
 );
 extern void _XRead32(
 	     Display *dpy,
-	     long *data,
+	     register long *data,
 	     long len
 );
 #else
-#define Data32(dpy, data, len) Data((dpy), (_Xconst char *)(data), (long)(len))
+#define Data32(dpy, data, len) Data((dpy), (_Xconst char *)(data), (len))
 #define _XRead32(dpy, data, len) _XRead((dpy), (char *)(data), (len))
 #endif
 
@@ -717,7 +706,7 @@ extern void _XRead32(
  * char.
  */
 #define CI_GET_CHAR_INFO_1D(fs,col,def,cs) \
-do { \
+{ \
     cs = def; \
     if (col >= fs->min_char_or_byte2 && col <= fs->max_char_or_byte2) { \
 	if (fs->per_char == NULL) { \
@@ -727,7 +716,7 @@ do { \
 	    if (CI_NONEXISTCHAR(cs)) cs = def; \
 	} \
     } \
-} while (0)
+}
 
 #define CI_GET_DEFAULT_INFO_1D(fs,cs) \
   CI_GET_CHAR_INFO_1D (fs, fs->default_char, NULL, cs)
@@ -739,7 +728,7 @@ do { \
  * column.  This is used for fonts that have more than row zero.
  */
 #define CI_GET_CHAR_INFO_2D(fs,row,col,def,cs) \
-do { \
+{ \
     cs = def; \
     if (row >= fs->min_byte1 && row <= fs->max_byte1 && \
 	col >= fs->min_char_or_byte2 && col <= fs->max_char_or_byte2) { \
@@ -753,19 +742,19 @@ do { \
 	    if (CI_NONEXISTCHAR(cs)) cs = def; \
         } \
     } \
-} while (0)
+}
 
 #define CI_GET_DEFAULT_INFO_2D(fs,cs) \
-do { \
+{ \
     unsigned int r = (fs->default_char >> 8); \
     unsigned int c = (fs->default_char & 0xff); \
     CI_GET_CHAR_INFO_2D (fs, r, c, NULL, cs); \
-} while (0)
+}
 
 
 /* srcvar must be a variable for large architecture version */
 #define OneDataCard32(dpy,dstaddr,srcvar) \
-    do { *(CARD32 *)(dstaddr) = (srcvar); } while (0)
+  { *(CARD32 *)(dstaddr) = (srcvar); }
 
 
 typedef struct _XInternalAsync {
@@ -805,12 +794,12 @@ typedef struct _XAsyncEState {
 } _XAsyncErrorState;
 
 extern void _XDeqAsyncHandler(Display *dpy, _XAsyncHandler *handler);
-#define DeqAsyncHandler(dpy,handler) do { \
+#define DeqAsyncHandler(dpy,handler) { \
     if (dpy->async_handlers == (handler)) \
 	dpy->async_handlers = (handler)->next; \
     else \
 	_XDeqAsyncHandler(dpy, handler); \
-    } while (0)
+    }
 
 typedef void (*FreeFuncType) (
     Display*	/* display */
@@ -926,6 +915,15 @@ typedef struct _XExten {		/* private to extension mechanism */
 	struct _XExten *next_flush;	/* next in list of those with flushes */
 } _XExtension;
 
+/* Temporary definition until we can depend on an xproto release with it */
+#ifdef _X_COLD
+# define _XLIB_COLD _X_COLD
+#elif defined(__GNUC__) && ((__GNUC__ * 100 + __GNUC_MINOR__) >= 403) /* 4.3+ */
+# define _XLIB_COLD __attribute__((__cold__))
+#else
+# define _XLIB_COLD /* nothing */
+#endif
+
 /* extension hooks */
 
 #ifdef DataRoutineIsProcedure
@@ -937,7 +935,7 @@ extern int _XError(
 );
 extern int _XIOError(
     Display*	/* dpy */
-);
+) _X_NORETURN;
 extern int (*_XIOErrorFunction)(
     Display*	/* dpy */
 );
@@ -948,11 +946,11 @@ extern int (*_XErrorFunction)(
 extern void _XEatData(
     Display*		/* dpy */,
     unsigned long	/* n */
-) _X_COLD;
+) _XLIB_COLD;
 extern void _XEatDataWords(
     Display*		/* dpy */,
     unsigned long	/* n */
-) _X_COLD;
+) _XLIB_COLD;
 #if defined(__SUNPRO_C) /* Studio compiler alternative to "cold" attribute */
 # pragma rarely_called(_XEatData, _XEatDataWords)
 #endif
@@ -1325,6 +1323,12 @@ struct _XConnWatchInfo {	/* info from XAddConnectionWatch */
     struct _XConnWatchInfo *next;
 };
 
+#ifdef __UNIXOS2__
+extern char* __XOS2RedirRoot(
+    char*
+);
+#endif
+
 extern int _XTextHeight(
     XFontStruct*	/* font_struct */,
     _Xconst char*	/* string */,
@@ -1375,10 +1379,10 @@ extern int _XF86LoadQueryLocaleFont(
 );
 
 extern void _XProcessWindowAttributes (
-    Display *dpy,
+    register Display *dpy,
     xChangeWindowAttributesReq *req,
-    unsigned long valuemask,
-    XSetWindowAttributes *attributes);
+    register unsigned long valuemask,
+    register XSetWindowAttributes *attributes);
 
 extern int _XDefaultError(
         Display *dpy,
@@ -1387,12 +1391,8 @@ extern int _XDefaultError(
 extern int _XDefaultIOError(
         Display *dpy);
 
-extern void _XDefaultIOErrorExit(
-    Display *dpy,
-    void *user_data);
-
 extern void _XSetClipRectangles (
-    Display *dpy,
+    register Display *dpy,
     GC gc,
     int clip_x_origin, int clip_y_origin,
     XRectangle *rectangles,
@@ -1400,13 +1400,13 @@ extern void _XSetClipRectangles (
     int ordering);
 
 Status _XGetWindowAttributes(
-    Display *dpy,
+    register Display *dpy,
     Window w,
     XWindowAttributes *attr);
 
 int _XPutBackEvent (
-    Display *dpy,
-    XEvent *event);
+    register Display *dpy,
+    register XEvent *event);
 
 extern Bool _XIsEventCookie(
         Display *dpy,

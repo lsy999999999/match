@@ -1,0 +1,10 @@
+prefix=/home/lsy/match/.py312
+exec_prefix=/home/lsy/match/.py312
+libdir=/home/lsy/match/.py312/lib
+includedir=/home/lsy/match/.py312/include
+
+Name: libjpeg
+Description: A SIMD-accelerated JPEG codec that provides the libjpeg API
+Version: 3.1.0
+Libs: -L${libdir} -ljpeg
+Cflags: -I${includedir}

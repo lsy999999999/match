@@ -297,7 +297,7 @@ extern	Bool	XkbIgnoreExtension(
 );
 
 extern	Display *XkbOpenDisplay(
-	_Xconst char *		/* name */,
+	char *			/* name */,
 	int *			/* ev_rtrn */,
 	int *			/* err_rtrn */,
 	int *			/* major_rtrn */,
@@ -396,7 +396,7 @@ extern	Bool		XkbTranslateKeyCode(
 
 extern	int		XkbTranslateKeySym(
     Display *			/* dpy */,
-    KeySym *			/* sym_return */,
+    register KeySym *		/* sym_return */,
     unsigned int 		/* modifiers */,
     char *			/* buffer */,
     int 			/* nbytes */,

@@ -36,6 +36,7 @@
 <Multi_key> <space> <asciitilde>	: "~"	asciitilde
 <Multi_key> <minus> <space>		: "~"	asciitilde
 <Multi_key> <space> <minus>		: "~"	asciitilde
+
 <Multi_key> <l> <minus>			: "\243"	sterling
 <Multi_key> <minus> <l>			: "\243"	sterling
 <Multi_key> <L> <minus>			: "\243"	sterling
@@ -114,6 +115,7 @@
 <Multi_key> <greater> <apostrophe>	: "\242"	rightsinglequotemark
 <Multi_key> <apostrophe> <greater>	: "\242"	rightsinglequotemark
 <Multi_key> <asciitilde> <asciitilde>	: "\257"	Greek_horizbar
+
 # Accented Alphabet
 <Multi_key> <Greek_ALPHA> <apostrophe>	: "\266" Greek_ALPHAaccent
 <Multi_key> <apostrophe> <Greek_ALPHA>	: "\266" Greek_ALPHAaccent
@@ -133,6 +135,7 @@
 <Multi_key> <quotedbl> <Greek_IOTA>	: "\332" Greek_IOTAdieresis
 <Multi_key> <Greek_UPSILON> <quotedbl>	: "\333" Greek_UPSILONdieresis
 <Multi_key> <quotedbl> <Greek_UPSILON>	: "\333" Greek_UPSILONdieresis
+
 <Multi_key> <Greek_alpha> <apostrophe>	: "\334" Greek_alphaaccent
 <Multi_key> <apostrophe> <Greek_alpha>	: "\334" Greek_alphaaccent
 <Multi_key> <Greek_epsilon> <apostrophe>: "\335" Greek_epsilonaccent
@@ -151,12 +154,14 @@
 <Multi_key> <quotedbl> <Greek_iota>	: "\372" Greek_iotadieresis
 <Multi_key> <Greek_upsilon> <quotedbl>	: "\373" Greek_upsilondieresis
 <Multi_key> <quotedbl> <Greek_upsilon>	: "\373" Greek_upsilondieresis
+
 <Multi_key> <apostrophe> <quotedbl> <Greek_iota>	: "\300" Greek_iotaaccentdieresis
 <Multi_key> <quotedbl> <apostrophe> <Greek_iota>	: "\300" Greek_iotaaccentdieresis
 <Multi_key> <apostrophe> <quotedbl> <Greek_upsilon>	: "\340" Greek_upsilonaccentdieresis
 <Multi_key> <quotedbl> <apostrophe> <Greek_upsilon>	: "\340" Greek_upsilonaccentdieresis
 <Multi_key> <apostrophe> <quotedbl> <space>		: "\265" Greek_accentdieresis
 <Multi_key> <quotedbl> <apostrophe> <space>		: "\265" Greek_accentdieresis
+
 #
 #
 # dead key accent keysyms
@@ -177,6 +182,7 @@
 <dead_cedilla> <minus>			: "\254"	notsign
 <dead_acute> <apostrophe>		: "\264"	acute
 <dead_diaeresis> <quotedbl>		: "\250"	diaeresis
+
 # Accented Alphabet (plus some more symbols)
 <dead_acute> <Greek_alpha>		: "\334"	Greek_alphaaccent
 <dead_acute> <Greek_epsilon>		: "\335"	Greek_epsilonaccent
@@ -197,6 +203,7 @@
 <dead_acute> <period>			: "\267"	periodcentered
 <dead_acute> <less>			: "\253"	guillemotleft
 <dead_acute> <greater>			: "\273"	guillemotright
+
 <dead_diaeresis> <Greek_iota>		: "\372"	Greek_iotadieresis
 <dead_diaeresis> <Greek_upsilon>	: "\373"	Greek_upsilondieresis
 <dead_diaeresis> <Greek_IOTA>		: "\332"	Greek_IOTAdieresis
@@ -205,9 +212,11 @@
 <dead_diaeresis> <period>		: "\267"	periodcentered
 <dead_diaeresis> <less>			: "\253"	guillemotleft
 <dead_diaeresis> <greater>		: "\273"	guillemotright
+
 <dead_acute> <dead_diaeresis> <Greek_iota>	: "\300"	Greek_iotaaccentdieresis
 <dead_acute> <dead_diaeresis> <Greek_upsilon>	: "\340"	Greek_upsilonaccentdieresis
 <dead_acute> <dead_diaeresis> <space>		: "\265"	Greek_accentdieresis
+
 <dead_diaeresis> <dead_acute> <Greek_iota>	: "\300"	Greek_iotaaccentdieresis
 <dead_diaeresis> <dead_acute> <Greek_upsilon>	: "\340"	Greek_upsilonaccentdieresis
 <dead_diaeresis> <dead_acute> <space>		: "\265"	Greek_accentdieresis

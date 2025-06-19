@@ -15,16 +15,16 @@ _XGetBitsPerPixel(
 extern int
 _XSetImage(
     XImage *srcimg,
-    XImage *dstimg,
-    int x,
-    int y);
+    register XImage *dstimg,
+    register int x,
+    register int y);
 
 extern int
 _XReverse_Bytes(
-    unsigned char *bpt,
-    int nb);
+    register unsigned char *bpt,
+    register int nb);
 extern void
 _XInitImageFuncPtrs(
-    XImage *image);
+    register XImage *image);
 
 #endif /* _X11_IMUTIL_H_ */

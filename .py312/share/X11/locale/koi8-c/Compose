@@ -4,6 +4,7 @@
 # Sequence Definition
 #
 #
+
 # <Multi_key> Means <Compose>
 # Special Character
 <Multi_key> <plus> <plus>               : "#"   numbersign
@@ -35,7 +36,9 @@
 <Multi_key> <space> <asciitilde>        : "~"   asciitilde
 <Multi_key> <minus> <space>             : "~"   asciitilde
 <Multi_key> <space> <minus>             : "~"   asciitilde
+
 <Multi_key> <space> <space>             : "\240"	nobreakspace
+
 <Multi_key> <Cyrillic_ghe> <minus>      : "\200"	Cyrillic_ghe_bar
 <Multi_key> <Cyrillic_GHE> <minus>      : "\220"	Cyrillic_GHE_bar
 <Multi_key> <Cyrillic_zhe> <comma>      : "\201"	Cyrillic_zhe_descender
@@ -80,6 +83,7 @@
 <Multi_key> <Cyrillic_O> <minus>	: "\235"	Cyrillic_O_bar
 <Multi_key> <Cyrillic_u> <minus>	: "\216"	Cyrillic_u_macron
 <Multi_key> <Cyrillic_U> <minus>	: "\236"	Cyrillic_U_macron
+
 <Multi_key> <Cyrillic_de> <Cyrillic_je>	: "\241"	Serbian_dje
 <Multi_key> <Cyrillic_DE> <Cyrillic_JE>	: "\261"	Serbian_DJE
 <Multi_key> <Cyrillic_ghe> <Cyrillic_je> : "\242"	Macedonia_gje
@@ -90,20 +94,29 @@
 <Multi_key> <Cyrillic_JE> <Cyrillic_O>	: "\263"	Cyrillic_IO
 <Multi_key> <Cyrillic_ie> <colon>	: "\243"	Cyrillic_io
 <Multi_key> <Cyrillic_IE> <colon>	: "\263"	Cyrillic_IO
+
 <Multi_key> <Cyrillic_el> <Cyrillic_je>	: "\251"	Cyrillic_lje
 <Multi_key> <Cyrillic_EL> <Cyrillic_JE>	: "\271"	Cyrillic_LJE
 <Multi_key> <Cyrillic_en> <Cyrillic_je>	: "\252"	Cyrillic_nje
 <Multi_key> <Cyrillic_EN> <Cyrillic_JE>	: "\272"	Cyrillic_NJE
+
 <Multi_key> <Cyrillic_shorti> <Cyrillic_u> : "\300"	Cyrillic_yu
 <Multi_key> <Cyrillic_SHORTI> <Cyrillic_U> : "\340"	Cyrillic_YU
 <Multi_key> <Cyrillic_je> <Cyrillic_u>	: "\300"	Cyrillic_yu
 <Multi_key> <Cyrillic_JE> <Cyrillic_U>	: "\340"	Cyrillic_YU
+
 <Multi_key> <Cyrillic_te> <Cyrillic_es>	: "\303"	Cyrillic_tse
 <Multi_key> <Cyrillic_TE> <Cyrillic_ES>	: "\343"	Cyrillic_TSE
+
 <Multi_key> <Cyrillic_shorti> <Cyrillic_a> : "\321"	Cyrillic_ya
 <Multi_key> <Cyrillic_SHORTI> <Cyrillic_A> : "\361"	Cyrillic_YA
 <Multi_key> <Cyrillic_je> <Cyrillic_a>	: "\321"	Cyrillic_ya
 <Multi_key> <Cyrillic_JE> <Cyrillic_A>	: "\361"	Cyrillic_YA
+
+
 <Multi_key> <Cyrillic_sha> <comma>	: "\335"	Cyrillic_shcha
 <Multi_key> <Cyrillic_SHA> <comma>	: "\375"	Cyrillic_SHCHA
+
+
+
 # End of Sequence Definition

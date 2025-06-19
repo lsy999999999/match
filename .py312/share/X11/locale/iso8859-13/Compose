@@ -353,6 +353,7 @@
 <Multi_key> <period> <Z>		: "\335"	Zabovedot
 <Multi_key> <z> <period>		: "\375"	zabovedot
 <Multi_key> <period> <z>		: "\375"	zabovedot
+
 <dead_abovedot> <A>			: "\305"	Aring
 <dead_abovedot> <a>			: "\345"	aring
 <dead_abovedot> <E> 			: "\313"	Eabovedot
@@ -427,4 +428,5 @@
 <dead_tilde> <o>			: "\365"	otilde
 <dead_tilde> <asciitilde>		: "~"		asciitilde
 <dead_tilde> <dead_tilde>		: "~"		asciitilde
+
 # End of Sequence Definition
