@@ -286,19 +286,15 @@ class Message:
         if i is not None and not isinstance(self._payload, list):
             raise TypeError('Expected list, got %s' % type(self._payload))
         payload = self._payload
-        cte = self.get('content-transfer-encoding', '')
-        if hasattr(cte, 'cte'):
-            cte = cte.cte
-        else:
-            # cte might be a Header, so for now stringify it.
-            cte = str(cte).strip().lower()
+        # cte might be a Header, so for now stringify it.
+        cte = str(self.get('content-transfer-encoding', '')).lower()
         # payload may be bytes here.
         if not decode:
             if isinstance(payload, str) and utils._has_surrogates(payload):
                 try:
                     bpayload = payload.encode('ascii', 'surrogateescape')
                     try:
-                        payload = bpayload.decode(self.get_content_charset('ascii'), 'replace')
+                        payload = bpayload.decode(self.get_param('charset', 'ascii'), 'replace')
                     except LookupError:
                         payload = bpayload.decode('ascii', 'replace')
                 except UnicodeEncodeError:
@@ -344,7 +340,7 @@ class Message:
                 return
             if not isinstance(charset, Charset):
                 charset = Charset(charset)
-            payload = payload.encode(charset.output_charset, 'surrogateescape')
+            payload = payload.encode(charset.output_charset)
         if hasattr(payload, 'decode'):
             self._payload = payload.decode('ascii', 'surrogateescape')
         else:

@@ -43,7 +43,7 @@ __all__ = [
     "requires_limited_api", "requires_specialization",
     # sys
     "MS_WINDOWS", "is_jython", "is_android", "is_emscripten", "is_wasi",
-    "is_apple_mobile", "check_impl_detail", "unix_shell", "setswitchinterval",
+    "check_impl_detail", "unix_shell", "setswitchinterval",
     # os
     "get_pagesize",
     # network
@@ -58,7 +58,6 @@ __all__ = [
     "LOOPBACK_TIMEOUT", "INTERNET_TIMEOUT", "SHORT_TIMEOUT", "LONG_TIMEOUT",
     "Py_DEBUG", "EXCEEDS_RECURSION_LIMIT", "C_RECURSION_LIMIT",
     "skip_on_s390x",
-    "BrokenIter",
     ]
 
 
@@ -250,16 +249,22 @@ def _is_gui_available():
         # process not running under the same user id as the current console
         # user.  To avoid that, raise an exception if the window manager
         # connection is not available.
-        import subprocess
-        try:
-            rc = subprocess.run(["launchctl", "managername"],
-                                capture_output=True, check=True)
-            managername = rc.stdout.decode("utf-8").strip()
-        except subprocess.CalledProcessError:
-            reason = "unable to detect macOS launchd job manager"
+        from ctypes import cdll, c_int, pointer, Structure
+        from ctypes.util import find_library
+
+        app_services = cdll.LoadLibrary(find_library("ApplicationServices"))
+
+        if app_services.CGMainDisplayID() == 0:
+            reason = "gui tests cannot run without OS X window manager"
         else:
-            if managername != "Aqua":
-                reason = f"{managername=} -- can only run in a macOS GUI session"
+            class ProcessSerialNumber(Structure):
+                _fields_ = [("highLongOfPSN", c_int),
+                            ("lowLongOfPSN", c_int)]
+            psn = ProcessSerialNumber()
+            psn_p = pointer(psn)
+            if (  (app_services.GetCurrentProcess(psn_p) < 0) or
+                  (app_services.SetFrontProcess(psn_p) < 0) ):
+                reason = "cannot run without OS X gui process"
 
     # check on every platform whether tkinter can actually do anything
     if not reason:
@@ -381,15 +386,15 @@ def skip_if_buildbot(reason=None):
         reason = 'not suitable for buildbots'
     try:
         isbuildbot = getpass.getuser().lower() == 'buildbot'
-    except (KeyError, OSError) as err:
+    except (KeyError, EnvironmentError) as err:
         warnings.warn(f'getpass.getuser() failed {err}.', RuntimeWarning)
         isbuildbot = False
     return unittest.skipIf(isbuildbot, reason)
 
-def check_sanitizer(*, address=False, memory=False, ub=False, thread=False):
+def check_sanitizer(*, address=False, memory=False, ub=False):
     """Returns True if Python is compiled with sanitizer support"""
-    if not (address or memory or ub or thread):
-        raise ValueError('At least one of address, memory, ub or thread must be True')
+    if not (address or memory or ub):
+        raise ValueError('At least one of address, memory, or ub must be True')
 
 
     cflags = sysconfig.get_config_var('CFLAGS') or ''
@@ -406,23 +411,18 @@ def check_sanitizer(*, address=False, memory=False, ub=False, thread=False):
         '-fsanitize=undefined' in cflags or
         '--with-undefined-behavior-sanitizer' in config_args
     )
-    thread_sanitizer = (
-        '-fsanitize=thread' in cflags or
-        '--with-thread-sanitizer' in config_args
-    )
     return (
         (memory and memory_sanitizer) or
         (address and address_sanitizer) or
-        (ub and ub_sanitizer) or
-        (thread and thread_sanitizer)
+        (ub and ub_sanitizer)
     )
 
 
-def skip_if_sanitizer(reason=None, *, address=False, memory=False, ub=False, thread=False):
+def skip_if_sanitizer(reason=None, *, address=False, memory=False, ub=False):
     """Decorator raising SkipTest if running with a sanitizer active."""
     if not reason:
         reason = 'not working with sanitizers active'
-    skip = check_sanitizer(address=address, memory=memory, ub=ub, thread=thread)
+    skip = check_sanitizer(address=address, memory=memory, ub=ub)
     return unittest.skipIf(skip, reason)
 
 # gh-89363: True if fork() can hang if Python is built with Address Sanitizer
@@ -431,7 +431,7 @@ HAVE_ASAN_FORK_BUG = check_sanitizer(address=True)
 
 
 def set_sanitizer_env_var(env, option):
-    for name in ('ASAN_OPTIONS', 'MSAN_OPTIONS', 'UBSAN_OPTIONS', 'TSAN_OPTIONS'):
+    for name in ('ASAN_OPTIONS', 'MSAN_OPTIONS', 'UBSAN_OPTIONS'):
         if name in env:
             env[name] += f':{option}'
         else:
@@ -525,7 +525,7 @@ is_jython = sys.platform.startswith('java')
 
 is_android = hasattr(sys, 'getandroidapilevel')
 
-if sys.platform not in {"win32", "vxworks", "ios", "tvos", "watchos"}:
+if sys.platform not in ('win32', 'vxworks'):
     unix_shell = '/system/bin/sh' if is_android else '/bin/sh'
 else:
     unix_shell = None
@@ -535,35 +535,19 @@ else:
 is_emscripten = sys.platform == "emscripten"
 is_wasi = sys.platform == "wasi"
 
-# Apple mobile platforms (iOS/tvOS/watchOS) are POSIX-like but do not
-# have subprocess or fork support.
-is_apple_mobile = sys.platform in {"ios", "tvos", "watchos"}
-is_apple = is_apple_mobile or sys.platform == "darwin"
-
-has_fork_support = hasattr(os, "fork") and not (
-    is_emscripten
-    or is_wasi
-    or is_apple_mobile
-)
+has_fork_support = hasattr(os, "fork") and not is_emscripten and not is_wasi
 
 def requires_fork():
     return unittest.skipUnless(has_fork_support, "requires working os.fork()")
 
-has_subprocess_support = not (
-    is_emscripten
-    or is_wasi
-    or is_apple_mobile
-)
+has_subprocess_support = not is_emscripten and not is_wasi
 
 def requires_subprocess():
     """Used for subprocess, os.spawn calls, fd inheritance"""
     return unittest.skipUnless(has_subprocess_support, "requires subprocess support")
 
 # Emscripten's socket emulation and WASI sockets have limitations.
-has_socket_support = not (
-    is_emscripten
-    or is_wasi
-)
+has_socket_support = not is_emscripten and not is_wasi
 
 def requires_working_socket(*, module=False):
     """Skip tests or modules that require working sockets
@@ -799,11 +783,7 @@ def python_is_optimized():
     for opt in cflags.split():
         if opt.startswith('-O'):
             final_opt = opt
-    if sysconfig.get_config_var("CC") == "gcc":
-        non_opts = ('', '-O0', '-Og')
-    else:
-        non_opts = ('', '-O0')
-    return final_opt not in non_opts
+    return final_opt not in ('', '-O0', '-Og')
 
 
 def check_cflags_pgo():
@@ -831,19 +811,9 @@ if hasattr(sys, "getobjects"):
     _align = '0P'
 _vheader = _header + 'n'
 
-def check_bolt_optimized():
-    # Always return false, if the platform is WASI,
-    # because BOLT optimization does not support WASM binary.
-    if is_wasi:
-        return False
-    config_args = sysconfig.get_config_var('CONFIG_ARGS') or ''
-    return '--enable-bolt' in config_args
-
-
 def calcobjsize(fmt):
     import struct
     return struct.calcsize(_header + fmt + _align)
-
 
 def calcvobjsize(fmt):
     import struct
@@ -868,8 +838,8 @@ def check_sizeof(test, o, size):
     test.assertEqual(result, size, msg)
 
 #=======================================================================
-# Decorator/context manager for running a code in a different locale,
-# correctly resetting it afterwards.
+# Decorator for running a function in a different locale, correctly resetting
+# it afterwards.
 
 @contextlib.contextmanager
 def run_with_locale(catstr, *locales):
@@ -880,67 +850,22 @@ def run_with_locale(catstr, *locales):
     except AttributeError:
         # if the test author gives us an invalid category string
         raise
-    except Exception:
+    except:
         # cannot retrieve original locale, so do nothing
         locale = orig_locale = None
-        if '' not in locales:
-            raise unittest.SkipTest('no locales')
     else:
         for loc in locales:
             try:
                 locale.setlocale(category, loc)
                 break
-            except locale.Error:
+            except:
                 pass
-        else:
-            if '' not in locales:
-                raise unittest.SkipTest(f'no locales {locales}')
 
     try:
         yield
     finally:
         if locale and orig_locale:
             locale.setlocale(category, orig_locale)
-
-#=======================================================================
-# Decorator for running a function in multiple locales (if they are
-# availasble) and resetting the original locale afterwards.
-
-def run_with_locales(catstr, *locales):
-    def deco(func):
-        @functools.wraps(func)
-        def wrapper(self, /, *args, **kwargs):
-            dry_run = '' in locales
-            try:
-                import locale
-                category = getattr(locale, catstr)
-                orig_locale = locale.setlocale(category)
-            except AttributeError:
-                # if the test author gives us an invalid category string
-                raise
-            except Exception:
-                # cannot retrieve original locale, so do nothing
-                pass
-            else:
-                try:
-                    for loc in locales:
-                        with self.subTest(locale=loc):
-                            try:
-                                locale.setlocale(category, loc)
-                            except locale.Error:
-                                self.skipTest(f'no locale {loc!r}')
-                            else:
-                                dry_run = False
-                                func(self, *args, **kwargs)
-                finally:
-                    locale.setlocale(category, orig_locale)
-            if dry_run:
-                # no locales available, so just run the test
-                # with the current locale
-                with self.subTest(locale=None):
-                    func(self, *args, **kwargs)
-        return wrapper
-    return deco
 
 #=======================================================================
 # Decorator for running a function in a specific timezone, correctly
@@ -2187,13 +2112,13 @@ def set_recursion_limit(limit):
     finally:
         sys.setrecursionlimit(original_limit)
 
-def infinite_recursion(max_depth=None):
-    if max_depth is None:
-        # Pick a number large enough to cause problems
-        # but not take too long for code that can handle
-        # very deep recursion.
-        max_depth = 20_000
-    elif max_depth < 3:
+def infinite_recursion(max_depth=100):
+    """Set a lower limit for tests that interact with infinite recursions
+    (e.g test_ast.ASTHelpers_Test.test_recursion_direct) since on some
+    debug windows builds, due to not enough functions being inlined the
+    stack size might not handle the default recursion limit (1000). See
+    bpo-11105 for details."""
+    if max_depth < 3:
         raise ValueError("max_depth must be at least 3, got {max_depth}")
     depth = get_recursion_depth()
     depth = max(depth - 1, 1)  # Ignore infinite_recursion() frame.
@@ -2437,26 +2362,11 @@ def adjust_int_max_str_digits(max_digits):
 EXCEEDS_RECURSION_LIMIT = 5000
 
 # The default C recursion limit (from Include/cpython/pystate.h).
-if Py_DEBUG:
-    if is_wasi:
-        C_RECURSION_LIMIT = 150
-    else:
-        C_RECURSION_LIMIT = 500
-else:
-    if is_wasi:
-        C_RECURSION_LIMIT = 500
-    elif hasattr(os, 'uname') and os.uname().machine == 's390x':
-        C_RECURSION_LIMIT = 800
-    elif sys.platform.startswith('win'):
-        C_RECURSION_LIMIT = 3000
-    elif check_sanitizer(address=True):
-        C_RECURSION_LIMIT = 4000
-    else:
-        C_RECURSION_LIMIT = 10000
+C_RECURSION_LIMIT = 1500
 
-# Windows doesn't have os.uname() but it doesn't support s390x.
-is_s390x = hasattr(os, 'uname') and os.uname().machine == 's390x'
-skip_on_s390x = unittest.skipIf(is_s390x, 'skipped on s390x')
+#Windows doesn't have os.uname() but it doesn't support s390x.
+skip_on_s390x = unittest.skipIf(hasattr(os, 'uname') and os.uname().machine == 's390x',
+                                'skipped on s390x')
 
 _BASE_COPY_SRC_DIR_IGNORED_NAMES = frozenset({
     # SRC_DIR/.git
@@ -2483,75 +2393,3 @@ def copy_python_src_ignore(path, names):
             'build',
         }
     return ignored
-
-
-def iter_builtin_types():
-    for obj in __builtins__.values():
-        if not isinstance(obj, type):
-            continue
-        cls = obj
-        if cls.__module__ != 'builtins':
-            continue
-        yield cls
-
-
-def iter_slot_wrappers(cls):
-    assert cls.__module__ == 'builtins', cls
-
-    def is_slot_wrapper(name, value):
-        if not isinstance(value, types.WrapperDescriptorType):
-            assert not repr(value).startswith('<slot wrapper '), (cls, name, value)
-            return False
-        assert repr(value).startswith('<slot wrapper '), (cls, name, value)
-        assert callable(value), (cls, name, value)
-        assert name.startswith('__') and name.endswith('__'), (cls, name, value)
-        return True
-
-    ns = vars(cls)
-    unused = set(ns)
-    for name in dir(cls):
-        if name in ns:
-            unused.remove(name)
-
-        try:
-            value = getattr(cls, name)
-        except AttributeError:
-            # It's as though it weren't in __dir__.
-            assert name in ('__annotate__', '__annotations__', '__abstractmethods__'), (cls, name)
-            if name in ns and is_slot_wrapper(name, ns[name]):
-                unused.add(name)
-            continue
-
-        if not name.startswith('__') or not name.endswith('__'):
-            assert not is_slot_wrapper(name, value), (cls, name, value)
-        if not is_slot_wrapper(name, value):
-            if name in ns:
-                assert not is_slot_wrapper(name, ns[name]), (cls, name, value, ns[name])
-        else:
-            if name in ns:
-                assert ns[name] is value, (cls, name, value, ns[name])
-                yield name, True
-            else:
-                yield name, False
-
-    for name in unused:
-        value = ns[name]
-        if is_slot_wrapper(cls, name, value):
-            yield name, True
-
-
-class BrokenIter:
-    def __init__(self, init_raises=False, next_raises=False, iter_raises=False):
-        if init_raises:
-            1/0
-        self.next_raises = next_raises
-        self.iter_raises = iter_raises
-
-    def __next__(self):
-        if self.next_raises:
-            1/0
-
-    def __iter__(self):
-        if self.iter_raises:
-            1/0
-        return self

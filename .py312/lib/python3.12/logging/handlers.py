@@ -187,18 +187,15 @@ class RotatingFileHandler(BaseRotatingHandler):
         Basically, see if the supplied record would cause the file to exceed
         the size limit we have.
         """
+        # See bpo-45401: Never rollover anything other than regular files
+        if os.path.exists(self.baseFilename) and not os.path.isfile(self.baseFilename):
+            return False
         if self.stream is None:                 # delay was set...
             self.stream = self._open()
         if self.maxBytes > 0:                   # are we rolling over?
-            pos = self.stream.tell()
-            if not pos:
-                # gh-116263: Never rollover an empty file
-                return False
             msg = "%s\n" % self.format(record)
-            if pos + len(msg) >= self.maxBytes:
-                # See bpo-45401: Never rollover anything other than regular files
-                if os.path.exists(self.baseFilename) and not os.path.isfile(self.baseFilename):
-                    return False
+            self.stream.seek(0, 2)  #due to non-posix-compliant Windows feature
+            if self.stream.tell() + len(msg) >= self.maxBytes:
                 return True
         return False
 
@@ -235,19 +232,19 @@ class TimedRotatingFileHandler(BaseRotatingHandler):
         if self.when == 'S':
             self.interval = 1 # one second
             self.suffix = "%Y-%m-%d_%H-%M-%S"
-            extMatch = r"(?<!\d)\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}(?!\d)"
+            self.extMatch = r"^\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2}(\.\w+)?$"
         elif self.when == 'M':
             self.interval = 60 # one minute
             self.suffix = "%Y-%m-%d_%H-%M"
-            extMatch = r"(?<!\d)\d{4}-\d{2}-\d{2}_\d{2}-\d{2}(?!\d)"
+            self.extMatch = r"^\d{4}-\d{2}-\d{2}_\d{2}-\d{2}(\.\w+)?$"
         elif self.when == 'H':
             self.interval = 60 * 60 # one hour
             self.suffix = "%Y-%m-%d_%H"
-            extMatch = r"(?<!\d)\d{4}-\d{2}-\d{2}_\d{2}(?!\d)"
+            self.extMatch = r"^\d{4}-\d{2}-\d{2}_\d{2}(\.\w+)?$"
         elif self.when == 'D' or self.when == 'MIDNIGHT':
             self.interval = 60 * 60 * 24 # one day
             self.suffix = "%Y-%m-%d"
-            extMatch = r"(?<!\d)\d{4}-\d{2}-\d{2}(?!\d)"
+            self.extMatch = r"^\d{4}-\d{2}-\d{2}(\.\w+)?$"
         elif self.when.startswith('W'):
             self.interval = 60 * 60 * 24 * 7 # one week
             if len(self.when) != 2:
@@ -256,17 +253,11 @@ class TimedRotatingFileHandler(BaseRotatingHandler):
                 raise ValueError("Invalid day specified for weekly rollover: %s" % self.when)
             self.dayOfWeek = int(self.when[1])
             self.suffix = "%Y-%m-%d"
-            extMatch = r"(?<!\d)\d{4}-\d{2}-\d{2}(?!\d)"
+            self.extMatch = r"^\d{4}-\d{2}-\d{2}(\.\w+)?$"
         else:
             raise ValueError("Invalid rollover interval specified: %s" % self.when)
 
-        # extMatch is a pattern for matching a datetime suffix in a file name.
-        # After custom naming, it is no longer guaranteed to be separated by
-        # periods from other parts of the filename.  The lookup statements
-        # (?<!\d) and (?!\d) ensure that the datetime suffix (which itself
-        # starts and ends with digits) is not preceded or followed by digits.
-        # This reduces the number of false matches and improves performance.
-        self.extMatch = re.compile(extMatch, re.ASCII)
+        self.extMatch = re.compile(self.extMatch, re.ASCII)
         self.interval = self.interval * interval # multiply by units requested
         # The following line added because the filename passed in could be a
         # path object (see Issue #27493), but self.baseFilename will be a string
@@ -308,7 +299,7 @@ class TimedRotatingFileHandler(BaseRotatingHandler):
 
             r = rotate_ts - ((currentHour * 60 + currentMinute) * 60 +
                 currentSecond)
-            if r <= 0:
+            if r < 0:
                 # Rotate time is before the current time (for example when
                 # self.rotateAt is 13:45 and it now 14:15), rotation is
                 # tomorrow.
@@ -337,21 +328,17 @@ class TimedRotatingFileHandler(BaseRotatingHandler):
                         daysToWait = self.dayOfWeek - day
                     else:
                         daysToWait = 6 - day + self.dayOfWeek + 1
-                    result += daysToWait * _MIDNIGHT
-                result += self.interval - _MIDNIGHT * 7
-            else:
-                result += self.interval - _MIDNIGHT
-            if not self.utc:
-                dstNow = t[-1]
-                dstAtRollover = time.localtime(result)[-1]
-                if dstNow != dstAtRollover:
-                    if not dstNow:  # DST kicks in before next rollover, so we need to deduct an hour
-                        addend = -3600
-                        if not time.localtime(result-3600)[-1]:
-                            addend = 0
-                    else:           # DST bows out before next rollover, so we need to add an hour
-                        addend = 3600
-                    result += addend
+                    newRolloverAt = result + (daysToWait * (60 * 60 * 24))
+                    if not self.utc:
+                        dstNow = t[-1]
+                        dstAtRollover = time.localtime(newRolloverAt)[-1]
+                        if dstNow != dstAtRollover:
+                            if not dstNow:  # DST kicks in before next rollover, so we need to deduct an hour
+                                addend = -3600
+                            else:           # DST bows out before next rollover, so we need to add an hour
+                                addend = 3600
+                            newRolloverAt += addend
+                    result = newRolloverAt
         return result
 
     def shouldRollover(self, record):
@@ -382,28 +369,32 @@ class TimedRotatingFileHandler(BaseRotatingHandler):
         dirName, baseName = os.path.split(self.baseFilename)
         fileNames = os.listdir(dirName)
         result = []
-        if self.namer is None:
-            prefix = baseName + '.'
-            plen = len(prefix)
-            for fileName in fileNames:
-                if fileName[:plen] == prefix:
-                    suffix = fileName[plen:]
-                    if self.extMatch.fullmatch(suffix):
-                        result.append(os.path.join(dirName, fileName))
-        else:
-            for fileName in fileNames:
-                # Our files could be just about anything after custom naming,
-                # but they should contain the datetime suffix.
-                # Try to find the datetime suffix in the file name and verify
-                # that the file name can be generated by this handler.
-                m = self.extMatch.search(fileName)
-                while m:
-                    dfn = self.namer(self.baseFilename + "." + m[0])
-                    if os.path.basename(dfn) == fileName:
+        # See bpo-44753: Don't use the extension when computing the prefix.
+        n, e = os.path.splitext(baseName)
+        prefix = n + '.'
+        plen = len(prefix)
+        for fileName in fileNames:
+            if self.namer is None:
+                # Our files will always start with baseName
+                if not fileName.startswith(baseName):
+                    continue
+            else:
+                # Our files could be just about anything after custom naming, but
+                # likely candidates are of the form
+                # foo.log.DATETIME_SUFFIX or foo.DATETIME_SUFFIX.log
+                if (not fileName.startswith(baseName) and fileName.endswith(e) and
+                    len(fileName) > (plen + 1) and not fileName[plen+1].isdigit()):
+                    continue
+
+            if fileName[:plen] == prefix:
+                suffix = fileName[plen:]
+                # See bpo-45628: The date/time suffix could be anywhere in the
+                # filename
+                parts = suffix.split('.')
+                for part in parts:
+                    if self.extMatch.match(part):
                         result.append(os.path.join(dirName, fileName))
                         break
-                    m = self.extMatch.search(fileName, m.start() + 1)
-
         if len(result) < self.backupCount:
             result = []
         else:
@@ -419,14 +410,17 @@ class TimedRotatingFileHandler(BaseRotatingHandler):
         then we have to get a list of matching filenames, sort them and remove
         the one with the oldest suffix.
         """
+        if self.stream:
+            self.stream.close()
+            self.stream = None
         # get the time that this sequence started at and make it a TimeTuple
         currentTime = int(time.time())
+        dstNow = time.localtime(currentTime)[-1]
         t = self.rolloverAt - self.interval
         if self.utc:
             timeTuple = time.gmtime(t)
         else:
             timeTuple = time.localtime(t)
-            dstNow = time.localtime(currentTime)[-1]
             dstThen = timeTuple[-1]
             if dstNow != dstThen:
                 if dstNow:
@@ -437,19 +431,26 @@ class TimedRotatingFileHandler(BaseRotatingHandler):
         dfn = self.rotation_filename(self.baseFilename + "." +
                                      time.strftime(self.suffix, timeTuple))
         if os.path.exists(dfn):
-            # Already rolled over.
-            return
-
-        if self.stream:
-            self.stream.close()
-            self.stream = None
+            os.remove(dfn)
         self.rotate(self.baseFilename, dfn)
         if self.backupCount > 0:
             for s in self.getFilesToDelete():
                 os.remove(s)
         if not self.delay:
             self.stream = self._open()
-        self.rolloverAt = self.computeRollover(currentTime)
+        newRolloverAt = self.computeRollover(currentTime)
+        while newRolloverAt <= currentTime:
+            newRolloverAt = newRolloverAt + self.interval
+        #If DST changes and midnight or weekly rollover, adjust for this.
+        if (self.when == 'MIDNIGHT' or self.when.startswith('W')) and not self.utc:
+            dstAtRollover = time.localtime(newRolloverAt)[-1]
+            if dstNow != dstAtRollover:
+                if not dstNow:  # DST kicks in before next rollover, so we need to deduct an hour
+                    addend = -3600
+                else:           # DST bows out before next rollover, so we need to add an hour
+                    addend = 3600
+                newRolloverAt += addend
+        self.rolloverAt = newRolloverAt
 
 class WatchedFileHandler(logging.FileHandler):
     """
@@ -1031,8 +1032,7 @@ class SMTPHandler(logging.Handler):
         only be used when authentication credentials are supplied. The tuple
         will be either an empty tuple, or a single-value tuple with the name
         of a keyfile, or a 2-value tuple with the names of the keyfile and
-        certificate file. (This tuple is passed to the
-        `ssl.SSLContext.load_cert_chain` method).
+        certificate file. (This tuple is passed to the `starttls` method).
         A timeout in seconds can be specified for the SMTP connection (the
         default is one second).
         """
@@ -1085,23 +1085,8 @@ class SMTPHandler(logging.Handler):
             msg.set_content(self.format(record))
             if self.username:
                 if self.secure is not None:
-                    import ssl
-
-                    try:
-                        keyfile = self.secure[0]
-                    except IndexError:
-                        keyfile = None
-
-                    try:
-                        certfile = self.secure[1]
-                    except IndexError:
-                        certfile = None
-
-                    context = ssl._create_stdlib_context(
-                        certfile=certfile, keyfile=keyfile
-                    )
                     smtp.ehlo()
-                    smtp.starttls(context=context)
+                    smtp.starttls(*self.secure)
                     smtp.ehlo()
                 smtp.login(self.username, self.password)
             smtp.send_message(msg)

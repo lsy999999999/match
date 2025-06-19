@@ -519,9 +519,9 @@ def cast(obj, typ):
 
 _string_at = PYFUNCTYPE(py_object, c_void_p, c_int)(_string_at_addr)
 def string_at(ptr, size=-1):
-    """string_at(ptr[, size]) -> string
+    """string_at(addr[, size]) -> string
 
-    Return the byte string at void *ptr."""
+    Return the string at addr."""
     return _string_at(ptr, size)
 
 try:
@@ -531,9 +531,9 @@ except ImportError:
 else:
     _wstring_at = PYFUNCTYPE(py_object, c_void_p, c_int)(_wstring_at_addr)
     def wstring_at(ptr, size=-1):
-        """wstring_at(ptr[, size]) -> string
+        """wstring_at(addr[, size]) -> string
 
-        Return the wide-character string at void *ptr."""
+        Return the string at addr."""
         return _wstring_at(ptr, size)
 
 

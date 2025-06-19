@@ -140,7 +140,7 @@ def create_women_dict(women_set_list, women_attr):
 
 if __name__=='__main__':
     group = 1
-    man_dict = read_file(r'E:\Gale_Shapley\save_merge_select_null_3.xlsx', group)
-    woman_dict = read_file_woman(r'E:\Gale_Shapley\save_merge_select_null_3.xlsx', group)
+    man_dict = read_file(r'/home/lsy/match/dataset/save_merge_select_null_3.xlsx', group)
+    woman_dict = read_file_woman(r'/home/lsy/match/dataset/save_merge_select_null_3.xlsx', group)
     print(man_dict)
     print(woman_dict)

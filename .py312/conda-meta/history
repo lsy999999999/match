@@ -63,3 +63,34 @@
 +defaults/noarch::python-tzdata-2025.2-pyhd3eb1b0_0
 +defaults/noarch::tzdata-2025b-h04d1e81_0
 # update specs: ['pandas', 'python=3.12', 'numpy', "openai[version='>=1.0']"]
+==> 2025-06-18 11:41:40 <==
+# cmd: /home/lsy/anaconda3/bin/conda install openpyxl -y
+# conda version: 25.5.1
+-defaults/linux-64::ca-certificates-2025.2.25-h06a4308_0
+-defaults/linux-64::certifi-2025.4.26-py312h06a4308_0
+-defaults/linux-64::expat-2.7.1-h6a678d5_0
+-defaults/linux-64::libgcc-ng-11.2.0-h1234567_1
+-defaults/linux-64::libgomp-11.2.0-h1234567_1
+-defaults/linux-64::libuuid-1.41.5-h5eee18b_0
+-defaults/linux-64::openssl-3.0.16-h5eee18b_0
+-defaults/linux-64::python-3.12.11-h22baa00_0
+-defaults/linux-64::zlib-1.2.13-h5eee18b_1
++conda-forge/linux-64::expat-2.7.0-h5888daf_0
++conda-forge/linux-64::libexpat-2.7.0-h5888daf_0
++conda-forge/linux-64::libgcc-15.1.0-h767d61c_2
++conda-forge/linux-64::libgcc-ng-15.1.0-h69a702a_2
++conda-forge/linux-64::libgomp-15.1.0-h767d61c_2
++conda-forge/linux-64::libnsl-2.0.1-hd590300_0
++conda-forge/linux-64::libsqlite-3.46.0-hde9e2c9_0
++conda-forge/linux-64::libuuid-2.38.1-h0b41bf4_0
++conda-forge/linux-64::libxcrypt-4.4.36-hd590300_1
++conda-forge/linux-64::libzlib-1.2.13-h4ab18f5_6
++conda-forge/linux-64::openpyxl-3.1.5-py312h710cb58_1
++conda-forge/linux-64::openssl-3.5.0-h7b32b05_1
++conda-forge/linux-64::python-3.12.2-hab00c5b_0_cpython
++conda-forge/linux-64::zlib-1.2.13-h4ab18f5_6
++conda-forge/noarch::ca-certificates-2025.6.15-hbd8a1cb_0
++conda-forge/noarch::certifi-2025.6.15-pyhd8ed1ab_0
++conda-forge/noarch::et_xmlfile-2.0.0-pyhd8ed1ab_1
++conda-forge/noarch::python_abi-3.12-7_cp312
+# update specs: ['openpyxl']

@@ -2,7 +2,6 @@ import ast
 import asyncio
 import code
 import concurrent.futures
-import contextvars
 import inspect
 import sys
 import threading
@@ -17,8 +16,8 @@ class AsyncIOInteractiveConsole(code.InteractiveConsole):
     def __init__(self, locals, loop):
         super().__init__(locals)
         self.compile.compiler.flags |= ast.PyCF_ALLOW_TOP_LEVEL_AWAIT
+
         self.loop = loop
-        self.context = contextvars.copy_context()
 
     def runcode(self, code):
         future = concurrent.futures.Future()
@@ -48,12 +47,12 @@ class AsyncIOInteractiveConsole(code.InteractiveConsole):
                 return
 
             try:
-                repl_future = self.loop.create_task(coro, context=self.context)
+                repl_future = self.loop.create_task(coro)
                 futures._chain_future(repl_future, future)
             except BaseException as exc:
                 future.set_exception(exc)
 
-        loop.call_soon_threadsafe(callback, context=self.context)
+        loop.call_soon_threadsafe(callback)
 
         try:
             return future.result()
@@ -91,8 +90,6 @@ class REPLThread(threading.Thread):
 
 
 if __name__ == '__main__':
-    sys.audit("cpython.run_stdin")
-
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 

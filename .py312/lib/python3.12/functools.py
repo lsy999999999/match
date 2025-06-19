@@ -238,14 +238,12 @@ def reduce(function, sequence, initial=_initial_missing):
     """
     reduce(function, iterable[, initial]) -> value
 
-    Apply a function of two arguments cumulatively to the items of an iterable, from left to right.
-
-    This effectively reduces the iterable to a single value.  If initial is present,
-    it is placed before the items of the iterable in the calculation, and serves as
-    a default when the iterable is empty.
-
-    For example, reduce(lambda x, y: x+y, [1, 2, 3, 4, 5])
-    calculates ((((1 + 2) + 3) + 4) + 5).
+    Apply a function of two arguments cumulatively to the items of a sequence
+    or iterable, from left to right, so as to reduce the iterable to a single
+    value.  For example, reduce(lambda x, y: x+y, [1, 2, 3, 4, 5]) calculates
+    ((((1+2)+3)+4)+5).  If initial is present, it is placed before the items
+    of the iterable in the calculation, and serves as a default when the
+    iterable is empty.
     """
 
     it = iter(sequence)
@@ -340,9 +338,6 @@ class partial:
         self.args = args
         self.keywords = kwds
 
-    __class_getitem__ = classmethod(GenericAlias)
-
-
 try:
     from _functools import partial
 except ImportError:
@@ -377,13 +372,15 @@ class partialmethod(object):
             self.keywords = keywords
 
     def __repr__(self):
-        cls = type(self)
-        module = cls.__module__
-        qualname = cls.__qualname__
-        args = [repr(self.func)]
-        args.extend(map(repr, self.args))
-        args.extend(f"{k}={v!r}" for k, v in self.keywords.items())
-        return f"{module}.{qualname}({', '.join(args)})"
+        args = ", ".join(map(repr, self.args))
+        keywords = ", ".join("{}={!r}".format(k, v)
+                                 for k, v in self.keywords.items())
+        format_string = "{module}.{cls}({func}, {args}, {keywords})"
+        return format_string.format(module=self.__class__.__module__,
+                                    cls=self.__class__.__qualname__,
+                                    func=self.func,
+                                    args=args,
+                                    keywords=keywords)
 
     def _make_unbound_method(self):
         def _method(cls_or_self, /, *args, **keywords):
@@ -663,7 +660,7 @@ def cache(user_function, /):
 def _c3_merge(sequences):
     """Merges MROs in *sequences* to a single MRO using the C3 algorithm.
 
-    Adapted from https://docs.python.org/3/howto/mro.html.
+    Adapted from https://www.python.org/download/releases/2.3/mro/.
 
     """
     result = []

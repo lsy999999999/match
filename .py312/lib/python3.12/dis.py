@@ -790,12 +790,12 @@ class Bytecode:
             return output.getvalue()
 
 
-def main(args=None):
+def main():
     import argparse
 
     parser = argparse.ArgumentParser()
     parser.add_argument('infile', type=argparse.FileType('rb'), nargs='?', default='-')
-    args = parser.parse_args(args=args)
+    args = parser.parse_args()
     with args.infile as infile:
         source = infile.read()
     code = compile(source, args.infile.name, "exec")

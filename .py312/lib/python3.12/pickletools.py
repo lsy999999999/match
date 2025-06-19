@@ -312,7 +312,7 @@ uint8 = ArgumentDescriptor(
             doc="Eight-byte unsigned integer, little-endian.")
 
 
-def read_stringnl(f, decode=True, stripquotes=True, *, encoding='latin-1'):
+def read_stringnl(f, decode=True, stripquotes=True):
     r"""
     >>> import io
     >>> read_stringnl(io.BytesIO(b"'abcd'\nefg\n"))
@@ -356,7 +356,7 @@ def read_stringnl(f, decode=True, stripquotes=True, *, encoding='latin-1'):
             raise ValueError("no string quotes around %r" % data)
 
     if decode:
-        data = codecs.escape_decode(data)[0].decode(encoding)
+        data = codecs.escape_decode(data)[0].decode("ascii")
     return data
 
 stringnl = ArgumentDescriptor(
@@ -370,7 +370,7 @@ stringnl = ArgumentDescriptor(
                    """)
 
 def read_stringnl_noescape(f):
-    return read_stringnl(f, stripquotes=False, encoding='utf-8')
+    return read_stringnl(f, stripquotes=False)
 
 stringnl_noescape = ArgumentDescriptor(
                         name='stringnl_noescape',
@@ -1253,7 +1253,7 @@ opcodes = [
       stack_before=[],
       stack_after=[pyint],
       proto=2,
-      doc="""Long integer using four-byte length.
+      doc="""Long integer using found-byte length.
 
       A more efficient encoding of a Python long; the long4 encoding
       says it all."""),
@@ -2513,10 +2513,7 @@ def dis(pickle, out=None, memo=None, indentlevel=4, annotate=0):
             # make a mild effort to align arguments
             line += ' ' * (10 - len(opcode.name))
             if arg is not None:
-                if opcode.name in ("STRING", "BINSTRING", "SHORT_BINSTRING"):
-                    line += ' ' + ascii(arg)
-                else:
-                    line += ' ' + repr(arg)
+                line += ' ' + repr(arg)
             if markmsg:
                 line += ' ' + markmsg
         if annotate:

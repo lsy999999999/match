@@ -588,7 +588,7 @@ class Counter(dict):
     # References:
     #   http://en.wikipedia.org/wiki/Multiset
     #   http://www.gnu.org/software/smalltalk/manual-base/html_node/Bag.html
-    #   http://www.java2s.com/Tutorial/Cpp/0380__set-multiset/Catalog0380__set-multiset.htm
+    #   http://www.demo2s.com/Tutorial/Cpp/0380__set-multiset/Catalog0380__set-multiset.htm
     #   http://code.activestate.com/recipes/259174/
     #   Knuth, TAOCP Vol. II section 4.6.3
 
@@ -638,8 +638,7 @@ class Counter(dict):
         >>> sorted(c.elements())
         ['A', 'A', 'B', 'B', 'C', 'C']
 
-        Knuth's example for prime factors of 1836:  2**2 * 3**3 * 17**1
-
+        # Knuth's example for prime factors of 1836:  2**2 * 3**3 * 17**1
         >>> import math
         >>> prime_factors = Counter({2: 2, 3: 3, 17: 1})
         >>> math.prod(prime_factors.elements())
@@ -680,7 +679,7 @@ class Counter(dict):
 
         '''
         # The regular dict.update() operation makes no sense here because the
-        # replace behavior results in some of the original untouched counts
+        # replace behavior results in the some of original untouched counts
         # being mixed-in with all of the other counts for a mismash that
         # doesn't have a straight-forward interpretation in most counting
         # contexts.  Instead, we implement straight-addition.  Both the inputs

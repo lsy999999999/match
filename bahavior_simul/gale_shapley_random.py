@@ -59,9 +59,9 @@ def gale_shapley(men_preferences, women_preferences, men_attr, women_attr, idx):
         handle_existing_choice(proposer, best_choice, matching, logtext, attr, men_attr, women_attr,single_list, is_man)
       print(matching)
 
-    log_text("1019_gpt4_turbo_random/1019_gpt4_turbo_random_group"+str(idx)+".csv", logtext)
+    log_text("/home/lsy/match/bahavior_simul/0618_gpt4_turbo_random/0618_gpt4_turbo_random_group"+str(idx)+".csv", logtext)
     js_obj = json.dumps(matching, ensure_ascii=False, default=default_dump)
-    with open("1019_gpt4_turbo_random/1019_gpt4_turbo_random_group"+str(idx)+".json", "a") as file:
+    with open("/home/lsy/match/bahavior_simul/0618_gpt4_turbo_random/0618_gpt4_turbo_random_group"+str(idx)+".json", "a") as file:
         file.write(js_obj)
     return matching
 
@@ -140,11 +140,8 @@ def log_text(logfile, logtext):
 
 
 if __name__=='__main__':
-  for i in range(1,22):
+  for i in range(1,2):
     # for _ in range(5):
-    l1,l2 = read_file(r'save_merge_select_null_3.xlsx', i)
-    print(len(l1.keys()),len(l2.keys()))
-    #   dict1, dict2 = read_file_attr(r'save_merge_select_null_3.xlsx', i)
-    #   gale_shapley(l1, l2, dict1, dict2, i)
-# 1414
-# 1414 + 1236
+    l1,l2 = read_file(r'/home/lsy/match/dataset/save_merge_select_null_3.xlsx', i)
+    dict1, dict2 = read_file_attr(r'/home/lsy/match/dataset/save_merge_select_null_3.xlsx', i)
+    gale_shapley(l1, l2, dict1, dict2, i)

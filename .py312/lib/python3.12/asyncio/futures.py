@@ -194,7 +194,8 @@ class Future:
         the future is done and has an exception set, this exception is raised.
         """
         if self._state == _CANCELLED:
-            raise self._make_cancelled_error()
+            exc = self._make_cancelled_error()
+            raise exc
         if self._state != _FINISHED:
             raise exceptions.InvalidStateError('Result is not ready.')
         self.__log_traceback = False
@@ -211,7 +212,8 @@ class Future:
         InvalidStateError.
         """
         if self._state == _CANCELLED:
-            raise self._make_cancelled_error()
+            exc = self._make_cancelled_error()
+            raise exc
         if self._state != _FINISHED:
             raise exceptions.InvalidStateError('Exception is not set.')
         self.__log_traceback = False
@@ -270,13 +272,9 @@ class Future:
             raise exceptions.InvalidStateError(f'{self._state}: {self!r}')
         if isinstance(exception, type):
             exception = exception()
-        if isinstance(exception, StopIteration):
-            new_exc = RuntimeError("StopIteration interacts badly with "
-                                   "generators and cannot be raised into a "
-                                   "Future")
-            new_exc.__cause__ = exception
-            new_exc.__context__ = exception
-            exception = new_exc
+        if type(exception) is StopIteration:
+            raise TypeError("StopIteration interacts badly with generators "
+                            "and cannot be raised into a Future")
         self._exception = exception
         self._exception_tb = exception.__traceback__
         self._state = _FINISHED

@@ -48,6 +48,10 @@
 /* Define if --enable-ipv6 is specified */
 #define ENABLE_IPV6 1
 
+/* Define to 1 if your system stores words within floats with the most
+   significant word first */
+/* #undef FLOAT_WORDS_BIGENDIAN */
+
 /* Define if getpgrp() must be called as getpgrp(0). */
 /* #undef GETPGRP_HAVE_ARG */
 
@@ -562,7 +566,7 @@
 /* #undef HAVE_GETRANDOM */
 
 /* Define to 1 if the Linux getrandom() syscall is available */
-#define HAVE_GETRANDOM_SYSCALL 1
+/* #undef HAVE_GETRANDOM_SYSCALL */
 
 /* Define to 1 if you have the `getresgid' function. */
 #define HAVE_GETRESGID 1
@@ -704,7 +708,7 @@
 #define HAVE_LINUX_AUXVEC_H 1
 
 /* Define to 1 if you have the <linux/can/bcm.h> header file. */
-#define HAVE_LINUX_CAN_BCM_H 1
+/* #undef HAVE_LINUX_CAN_BCM_H */
 
 /* Define to 1 if you have the <linux/can.h> header file. */
 #define HAVE_LINUX_CAN_H 1
@@ -713,13 +717,13 @@
 /* #undef HAVE_LINUX_CAN_J1939_H */
 
 /* Define if compiling using Linux 3.6 or later. */
-#define HAVE_LINUX_CAN_RAW_FD_FRAMES 1
+/* #undef HAVE_LINUX_CAN_RAW_FD_FRAMES */
 
 /* Define to 1 if you have the <linux/can/raw.h> header file. */
 #define HAVE_LINUX_CAN_RAW_H 1
 
 /* Define if compiling using Linux 4.1 or later. */
-#define HAVE_LINUX_CAN_RAW_JOIN_FILTERS 1
+/* #undef HAVE_LINUX_CAN_RAW_JOIN_FILTERS */
 
 /* Define to 1 if you have the <linux/fs.h> header file. */
 #define HAVE_LINUX_FS_H 1
@@ -728,7 +732,7 @@
 #define HAVE_LINUX_LIMITS_H 1
 
 /* Define to 1 if you have the <linux/memfd.h> header file. */
-#define HAVE_LINUX_MEMFD_H 1
+/* #undef HAVE_LINUX_MEMFD_H */
 
 /* Define to 1 if you have the <linux/netlink.h> header file. */
 #define HAVE_LINUX_NETLINK_H 1
@@ -746,7 +750,7 @@
 #define HAVE_LINUX_TIPC_H 1
 
 /* Define to 1 if you have the <linux/vm_sockets.h> header file. */
-#define HAVE_LINUX_VM_SOCKETS_H 1
+/* #undef HAVE_LINUX_VM_SOCKETS_H */
 
 /* Define to 1 if you have the <linux/wait.h> header file. */
 #define HAVE_LINUX_WAIT_H 1
@@ -915,7 +919,7 @@
 /* #undef HAVE_PREADV2 */
 
 /* Define if you have the 'prlimit' function. */
-#define HAVE_PRLIMIT 1
+/* #undef HAVE_PRLIMIT */
 
 /* Define to 1 if you have the <process.h> header file. */
 /* #undef HAVE_PROCESS_H */
@@ -960,7 +964,7 @@
 /* #undef HAVE_PWRITEV2 */
 
 /* Define to 1 if you have the <readline/readline.h> header file. */
-#define HAVE_READLINE_READLINE_H 1
+/* #undef HAVE_READLINE_READLINE_H */
 
 /* Define to 1 if you have the `readlink' function. */
 #define HAVE_READLINK 1
@@ -1077,7 +1081,7 @@
 #define HAVE_SETLOCALE 1
 
 /* Define to 1 if you have the `setns' function. */
-#define HAVE_SETNS 1
+/* #undef HAVE_SETNS */
 
 /* Define to 1 if you have the `setpgid' function. */
 #define HAVE_SETPGID 1
@@ -1161,7 +1165,7 @@
 #define HAVE_SNPRINTF 1
 
 /* struct sockaddr_alg (linux/if_alg.h) */
-#define HAVE_SOCKADDR_ALG 1
+/* #undef HAVE_SOCKADDR_ALG */
 
 /* Define if sockaddr has sa_len member */
 /* #undef HAVE_SOCKADDR_SA_LEN */
@@ -1275,7 +1279,7 @@
 /* #undef HAVE_SYS_AUDIOIO_H */
 
 /* Define to 1 if you have the <sys/auxv.h> header file. */
-#define HAVE_SYS_AUXV_H 1
+/* #undef HAVE_SYS_AUXV_H */
 
 /* Define to 1 if you have the <sys/bsdtty.h> header file. */
 /* #undef HAVE_SYS_BSDTTY_H */
@@ -1332,9 +1336,6 @@
 
 /* Define to 1 if you have the <sys/param.h> header file. */
 #define HAVE_SYS_PARAM_H 1
-
-/* Define to 1 if you have the <sys/pidfd.h> header file. */
-/* #undef HAVE_SYS_PIDFD_H */
 
 /* Define to 1 if you have the <sys/poll.h> header file. */
 #define HAVE_SYS_POLL_H 1
@@ -1436,8 +1437,8 @@
 /* Define to 1 if you have the `truncate' function. */
 #define HAVE_TRUNCATE 1
 
-/* Define to 1 if you have the `ttyname_r' function. */
-#define HAVE_TTYNAME_R 1
+/* Define to 1 if you have the `ttyname' function. */
+#define HAVE_TTYNAME 1
 
 /* Define to 1 if you don't have `tm_zone' but do have the external array
    `tzname'. */

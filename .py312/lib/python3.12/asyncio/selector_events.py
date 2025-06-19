@@ -1183,19 +1183,15 @@ class _SelectorSocketTransport(_SelectorTransport):
         # If the entire buffer couldn't be written, register a write handler
         if self._buffer:
             self._loop._add_writer(self._sock_fd, self._write_ready)
-            self._maybe_pause_protocol()
 
     def can_write_eof(self):
         return True
 
     def _call_connection_lost(self, exc):
-        try:
-            super()._call_connection_lost(exc)
-        finally:
-            self._write_ready = None
-            if self._empty_waiter is not None:
-                self._empty_waiter.set_exception(
-                    ConnectionError("Connection is closed by peer"))
+        super()._call_connection_lost(exc)
+        if self._empty_waiter is not None:
+            self._empty_waiter.set_exception(
+                ConnectionError("Connection is closed by peer"))
 
     def _make_empty_waiter(self):
         if self._empty_waiter is not None:
@@ -1210,6 +1206,7 @@ class _SelectorSocketTransport(_SelectorTransport):
 
     def close(self):
         self._read_ready_cb = None
+        self._write_ready = None
         super().close()
 
 

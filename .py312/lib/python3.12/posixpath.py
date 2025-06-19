@@ -35,7 +35,7 @@ __all__ = ["normcase","isabs","join","splitdrive","splitroot","split","splitext"
            "samefile","sameopenfile","samestat",
            "curdir","pardir","sep","pathsep","defpath","altsep","extsep",
            "devnull","realpath","supports_unicode_filenames","relpath",
-           "commonpath", "isjunction", "ALLOW_MISSING"]
+           "commonpath", "isjunction"]
 
 
 def _get_sep(path):
@@ -290,7 +290,7 @@ def expanduser(path):
             return path
         name = path[1:i]
         if isinstance(name, bytes):
-            name = os.fsdecode(name)
+            name = str(name, 'ASCII')
         try:
             pwent = pwd.getpwnam(name)
         except KeyError:
@@ -371,7 +371,7 @@ def expandvars(path):
 # if it contains symbolic links!
 
 try:
-    from posix import _path_normpath as normpath
+    from posix import _path_normpath
 
 except ImportError:
     def normpath(path):
@@ -403,6 +403,14 @@ except ImportError:
         comps = new_comps
         path = initial_slashes + sep.join(comps)
         return path or dot
+
+else:
+    def normpath(path):
+        """Normalize path, eliminating double slashes, etc."""
+        path = os.fspath(path)
+        if isinstance(path, bytes):
+            return os.fsencode(_path_normpath(os.fsdecode(path))) or b"."
+        return _path_normpath(path) or "."
 
 
 def abspath(path):
@@ -438,15 +446,6 @@ def _joinrealpath(path, rest, strict, seen):
         sep = '/'
         curdir = '.'
         pardir = '..'
-        getcwd = os.getcwd
-    if strict is ALLOW_MISSING:
-        ignored_error = FileNotFoundError
-    elif strict:
-        ignored_error = ()
-    else:
-        ignored_error = OSError
-
-    maxlinks = None
 
     if isabs(rest):
         rest = rest[1:]
@@ -469,7 +468,9 @@ def _joinrealpath(path, rest, strict, seen):
         newpath = join(path, name)
         try:
             st = os.lstat(newpath)
-        except ignored_error:
+        except OSError:
+            if strict:
+                raise
             is_link = False
         else:
             is_link = stat.S_ISLNK(st.st_mode)

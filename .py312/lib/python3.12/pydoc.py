@@ -54,7 +54,6 @@ Richard Chamberlain, for the first implementation of textdoc.
 #     the current directory is changed with os.chdir(), an incorrect
 #     path will be displayed.
 
-import ast
 import __future__
 import builtins
 import importlib._bootstrap
@@ -205,19 +204,6 @@ def classname(object, modname):
         name = object.__module__ + '.' + name
     return name
 
-def parentname(object, modname):
-    """Get a name of the enclosing class (qualified it with a module name
-    if necessary) or module."""
-    if '.' in object.__qualname__:
-        name = object.__qualname__.rpartition('.')[0]
-        if object.__module__ != modname and object.__module__ is not None:
-            return object.__module__ + '.' + name
-        else:
-            return name
-    else:
-        if object.__module__ != modname:
-            return object.__module__
-
 def isdata(object):
     """Check if an object is of a type that probably means it's data."""
     return not (inspect.ismodule(object) or inspect.isclass(object) or
@@ -312,15 +298,13 @@ def visiblename(name, all=None, obj=None):
         return not name.startswith('_')
 
 def classify_class_attrs(object):
-    """Wrap inspect.classify_class_attrs, with fixup for data descriptors and bound methods."""
+    """Wrap inspect.classify_class_attrs, with fixup for data descriptors."""
     results = []
     for (name, kind, cls, value) in inspect.classify_class_attrs(object):
         if inspect.isdatadescriptor(value):
             kind = 'data descriptor'
             if isinstance(value, property) and value.fset is None:
                 kind = 'readonly property'
-        elif kind == 'method' and _is_bound_method(value):
-            kind = 'static method'
         results.append((name, kind, cls, value))
     return results
 
@@ -347,29 +331,21 @@ def ispackage(path):
     return False
 
 def source_synopsis(file):
-    """Return the one-line summary of a file object, if present"""
-
-    string = ''
-    try:
-        tokens = tokenize.generate_tokens(file.readline)
-        for tok_type, tok_string, _, _, _ in tokens:
-            if tok_type == tokenize.STRING:
-                string += tok_string
-            elif tok_type == tokenize.NEWLINE:
-                with warnings.catch_warnings():
-                    # Ignore the "invalid escape sequence" warning.
-                    warnings.simplefilter("ignore", SyntaxWarning)
-                    docstring = ast.literal_eval(string)
-                if not isinstance(docstring, str):
-                    return None
-                return docstring.strip().split('\n')[0].strip()
-            elif tok_type == tokenize.OP and tok_string in ('(', ')'):
-                string += tok_string
-            elif tok_type not in (tokenize.COMMENT, tokenize.NL, tokenize.ENCODING):
-                return None
-    except (tokenize.TokenError, UnicodeDecodeError, SyntaxError):
-        return None
-    return None
+    line = file.readline()
+    while line[:1] == '#' or not line.strip():
+        line = file.readline()
+        if not line: break
+    line = line.strip()
+    if line[:4] == 'r"""': line = line[1:]
+    if line[:3] == '"""':
+        line = line[3:]
+        if line[-1:] == '\\': line = line[:-1]
+        while not line.strip():
+            line = file.readline()
+            if not line: break
+        result = line.split('"""')[0].strip()
+    else: result = None
+    return result
 
 def synopsis(filename, cache={}):
     """Get the one-line summary out of a module file."""
@@ -538,7 +514,7 @@ class Doc:
                                  '_thread', 'zipimport') or
              (file.startswith(basedir) and
               not file.startswith(os.path.join(basedir, 'site-packages')))) and
-            object.__name__ not in ('xml.etree', 'test.test_pydoc.pydoc_mod')):
+            object.__name__ not in ('xml.etree', 'test.pydoc_mod')):
             if docloc.startswith(("http://", "https://")):
                 docloc = "{}/{}.html".format(docloc.rstrip("/"), object.__name__.lower())
             else:
@@ -681,25 +657,6 @@ class HTMLDoc(Doc):
             return '<a href="%s.html#%s">%s</a>' % (
                 module.__name__, name, classname(object, modname))
         return classname(object, modname)
-
-    def parentlink(self, object, modname):
-        """Make a link for the enclosing class or module."""
-        link = None
-        name, module = object.__name__, sys.modules.get(object.__module__)
-        if hasattr(module, name) and getattr(module, name) is object:
-            if '.' in object.__qualname__:
-                name = object.__qualname__.rpartition('.')[0]
-                if object.__module__ != modname:
-                    link = '%s.html#%s' % (module.__name__, name)
-                else:
-                    link = '#%s' % name
-            else:
-                if object.__module__ != modname:
-                    link = '%s.html' % module.__name__
-        if link:
-            return '<a href="%s">%s</a>' % (link, parentname(object, modname))
-        else:
-            return parentname(object, modname)
 
     def modulelink(self, object):
         """Make a link for a module."""
@@ -945,7 +902,7 @@ class HTMLDoc(Doc):
                         push(self.docdata(value, name, mod))
                     else:
                         push(self.document(value, name, mod,
-                                        funcs, classes, mdict, object, homecls))
+                                        funcs, classes, mdict, object))
                     push('\n')
             return attrs
 
@@ -1068,44 +1025,24 @@ class HTMLDoc(Doc):
         return self.grey('=' + self.repr(object))
 
     def docroutine(self, object, name=None, mod=None,
-                   funcs={}, classes={}, methods={}, cl=None, homecls=None):
+                   funcs={}, classes={}, methods={}, cl=None):
         """Produce HTML documentation for a function or method object."""
         realname = object.__name__
         name = name or realname
-        if homecls is None:
-            homecls = cl
-        anchor = ('' if cl is None else cl.__name__) + '-' + name
+        anchor = (cl and cl.__name__ or '') + '-' + name
         note = ''
-        skipdocs = False
-        imfunc = None
+        skipdocs = 0
         if _is_bound_method(object):
-            imself = object.__self__
-            if imself is cl:
-                imfunc = getattr(object, '__func__', None)
-            elif inspect.isclass(imself):
-                note = ' class method of %s' % self.classlink(imself, mod)
+            imclass = object.__self__.__class__
+            if cl:
+                if imclass is not cl:
+                    note = ' from ' + self.classlink(imclass, mod)
             else:
-                note = ' method of %s instance' % self.classlink(
-                    imself.__class__, mod)
-        elif (inspect.ismethoddescriptor(object) or
-              inspect.ismethodwrapper(object)):
-            try:
-                objclass = object.__objclass__
-            except AttributeError:
-                pass
-            else:
-                if cl is None:
-                    note = ' unbound %s method' % self.classlink(objclass, mod)
-                elif objclass is not homecls:
-                    note = ' from ' + self.classlink(objclass, mod)
-        else:
-            imfunc = object
-        if inspect.isfunction(imfunc) and homecls is not None and (
-            imfunc.__module__ != homecls.__module__ or
-            imfunc.__qualname__ != homecls.__qualname__ + '.' + realname):
-            pname = self.parentlink(imfunc, mod)
-            if pname:
-                note = ' from %s' % pname
+                if object.__self__ is not None:
+                    note = ' method of %s instance' % self.classlink(
+                        object.__self__.__class__, mod)
+                else:
+                    note = ' unbound %s method' % self.classlink(imclass,mod)
 
         if (inspect.iscoroutinefunction(object) or
                 inspect.isasyncgenfunction(object)):
@@ -1116,13 +1053,10 @@ class HTMLDoc(Doc):
         if name == realname:
             title = '<a name="%s"><strong>%s</strong></a>' % (anchor, realname)
         else:
-            if (cl is not None and
-                inspect.getattr_static(cl, realname, []) is object):
+            if cl and inspect.getattr_static(cl, realname, []) is object:
                 reallink = '<a href="#%s">%s</a>' % (
                     cl.__name__ + '-' + realname, realname)
-                skipdocs = True
-                if note.startswith(' from '):
-                    note = ''
+                skipdocs = 1
             else:
                 reallink = realname
             title = '<a name="%s"><strong>%s</strong></a> = %s' % (
@@ -1140,8 +1074,7 @@ class HTMLDoc(Doc):
                     # XXX lambda's won't usually have func_annotations['return']
                     # since the syntax doesn't support but it is possible.
                     # So removing parentheses isn't truly safe.
-                    if not object.__annotations__:
-                        argspec = argspec[1:-1] # remove parentheses
+                    argspec = argspec[1:-1] # remove parentheses
         if not argspec:
             argspec = '(...)'
 
@@ -1156,7 +1089,7 @@ class HTMLDoc(Doc):
             doc = doc and '<dd><span class="code">%s</span></dd>' % doc
             return '<dl><dt>%s</dt>%s</dl>\n' % (decl, doc)
 
-    def docdata(self, object, name=None, mod=None, cl=None, *ignored):
+    def docdata(self, object, name=None, mod=None, cl=None):
         """Produce html documentation for a data descriptor."""
         results = []
         push = results.append
@@ -1267,7 +1200,7 @@ class TextDoc(Doc):
                     entry, modname, c, prefix + '    ')
         return result
 
-    def docmodule(self, object, name=None, mod=None, *ignored):
+    def docmodule(self, object, name=None, mod=None):
         """Produce text documentation for a given module object."""
         name = object.__name__ # ignore the passed-in name
         synop, desc = splitdoc(getdoc(object))
@@ -1451,7 +1384,7 @@ location listed above.
                         push(self.docdata(value, name, mod))
                     else:
                         push(self.document(value,
-                                        name, mod, object, homecls))
+                                        name, mod, object))
             return attrs
 
         def spilldescriptors(msg, attrs, predicate):
@@ -1526,43 +1459,23 @@ location listed above.
         """Format an argument default value as text."""
         return '=' + self.repr(object)
 
-    def docroutine(self, object, name=None, mod=None, cl=None, homecls=None):
+    def docroutine(self, object, name=None, mod=None, cl=None):
         """Produce text documentation for a function or method object."""
         realname = object.__name__
         name = name or realname
-        if homecls is None:
-            homecls = cl
         note = ''
-        skipdocs = False
-        imfunc = None
+        skipdocs = 0
         if _is_bound_method(object):
-            imself = object.__self__
-            if imself is cl:
-                imfunc = getattr(object, '__func__', None)
-            elif inspect.isclass(imself):
-                note = ' class method of %s' % classname(imself, mod)
+            imclass = object.__self__.__class__
+            if cl:
+                if imclass is not cl:
+                    note = ' from ' + classname(imclass, mod)
             else:
-                note = ' method of %s instance' % classname(
-                    imself.__class__, mod)
-        elif (inspect.ismethoddescriptor(object) or
-              inspect.ismethodwrapper(object)):
-            try:
-                objclass = object.__objclass__
-            except AttributeError:
-                pass
-            else:
-                if cl is None:
-                    note = ' unbound %s method' % classname(objclass, mod)
-                elif objclass is not homecls:
-                    note = ' from ' + classname(objclass, mod)
-        else:
-            imfunc = object
-        if inspect.isfunction(imfunc) and homecls is not None and (
-            imfunc.__module__ != homecls.__module__ or
-            imfunc.__qualname__ != homecls.__qualname__ + '.' + realname):
-            pname = parentname(imfunc, mod)
-            if pname:
-                note = ' from %s' % pname
+                if object.__self__ is not None:
+                    note = ' method of %s instance' % classname(
+                        object.__self__.__class__, mod)
+                else:
+                    note = ' unbound %s method' % classname(imclass,mod)
 
         if (inspect.iscoroutinefunction(object) or
                 inspect.isasyncgenfunction(object)):
@@ -1573,11 +1486,8 @@ location listed above.
         if name == realname:
             title = self.bold(realname)
         else:
-            if (cl is not None and
-                inspect.getattr_static(cl, realname, []) is object):
-                skipdocs = True
-                if note.startswith(' from '):
-                    note = ''
+            if cl and inspect.getattr_static(cl, realname, []) is object:
+                skipdocs = 1
             title = self.bold(name) + ' = ' + realname
         argspec = None
 
@@ -1593,8 +1503,7 @@ location listed above.
                     # XXX lambda's won't usually have func_annotations['return']
                     # since the syntax doesn't support but it is possible.
                     # So removing parentheses isn't truly safe.
-                    if not object.__annotations__:
-                        argspec = argspec[1:-1] # remove parentheses
+                    argspec = argspec[1:-1] # remove parentheses
         if not argspec:
             argspec = '(...)'
         decl = asyncqualifier + title + argspec + note
@@ -1605,7 +1514,7 @@ location listed above.
             doc = getdoc(object) or ''
             return decl + '\n' + (doc and self.indent(doc).rstrip() + '\n')
 
-    def docdata(self, object, name=None, mod=None, cl=None, *ignored):
+    def docdata(self, object, name=None, mod=None, cl=None):
         """Produce text documentation for a data descriptor."""
         results = []
         push = results.append
@@ -1621,8 +1530,7 @@ location listed above.
 
     docproperty = docdata
 
-    def docother(self, object, name=None, mod=None, parent=None, *ignored,
-                 maxlen=None, doc=None):
+    def docother(self, object, name=None, mod=None, parent=None, maxlen=None, doc=None):
         """Produce text documentation for a data object."""
         repr = self.repr(object)
         if maxlen:
@@ -2157,7 +2065,7 @@ has the same effect as typing a particular string at the help> prompt.
             elif request in self.symbols: self.showsymbol(request)
             elif request in ['True', 'False', 'None']:
                 # special case these keywords since they are objects too
-                doc(eval(request), 'Help on %s:', output=self._output, is_cli=is_cli)
+                doc(eval(request), 'Help on %s:', is_cli=is_cli)
             elif request in self.keywords: self.showtopic(request)
             elif request in self.topics: self.showtopic(request)
             elif request: doc(request, 'Help on %s:', output=self._output, is_cli=is_cli)
@@ -2250,11 +2158,7 @@ module "pydoc_data.topics" could not be found.
             text = 'Related help topics: ' + ', '.join(xrefs.split()) + '\n'
             wrapped_text = textwrap.wrap(text, 72)
             doc += '\n%s\n' % '\n'.join(wrapped_text)
-
-        if self._output is None:
-            pager(doc)
-        else:
-            self.output.write(doc)
+        pager(doc)
 
     def _gettopic(self, topic, more_xrefs=''):
         """Return unbuffered tuple of (topic, xrefs).
@@ -2506,7 +2410,6 @@ def _start_server(urlhandler, hostname, port):
             threading.Thread.__init__(self)
             self.serving = False
             self.error = None
-            self.docserver = None
 
         def run(self):
             """Start the server."""
@@ -2539,9 +2442,9 @@ def _start_server(urlhandler, hostname, port):
 
     thread = ServerThread(urlhandler, hostname, port)
     thread.start()
-    # Wait until thread.serving is True and thread.docserver is set
-    # to make sure we are really up before returning.
-    while not thread.error and not (thread.serving and thread.docserver):
+    # Wait until thread.serving is True to make sure we are
+    # really up before returning.
+    while not thread.error and not thread.serving:
         time.sleep(.01)
     return thread
 

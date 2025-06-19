@@ -17,6 +17,7 @@ import collections
 import collections.abc
 import concurrent.futures
 import errno
+import functools
 import heapq
 import itertools
 import os
@@ -44,7 +45,6 @@ from . import protocols
 from . import sslproto
 from . import staggered
 from . import tasks
-from . import timeouts
 from . import transports
 from . import trsock
 from .log import logger
@@ -466,12 +466,7 @@ class BaseEventLoop(events.AbstractEventLoop):
 
             tasks._set_task_name(task, name)
 
-        try:
-            return task
-        finally:
-            # gh-128552: prevent a refcycle of
-            # task.exception().__traceback__->BaseEventLoop.create_task->task
-            del task
+        return task
 
     def set_task_factory(self, factory):
         """Set a task factory that will be used by loop.create_task().
@@ -601,24 +596,23 @@ class BaseEventLoop(events.AbstractEventLoop):
         thread = threading.Thread(target=self._do_shutdown, args=(future,))
         thread.start()
         try:
-            async with timeouts.timeout(timeout):
-                await future
-        except TimeoutError:
+            await future
+        finally:
+            thread.join(timeout)
+
+        if thread.is_alive():
             warnings.warn("The executor did not finishing joining "
-                          f"its threads within {timeout} seconds.",
-                          RuntimeWarning, stacklevel=2)
+                             f"its threads within {timeout} seconds.",
+                             RuntimeWarning, stacklevel=2)
             self._default_executor.shutdown(wait=False)
-        else:
-            thread.join()
 
     def _do_shutdown(self, future):
         try:
             self._default_executor.shutdown(wait=True)
             if not self.is_closed():
-                self.call_soon_threadsafe(futures._set_result_unless_cancelled,
-                                          future, None)
+                self.call_soon_threadsafe(future.set_result, None)
         except Exception as ex:
-            if not self.is_closed() and not future.cancelled():
+            if not self.is_closed():
                 self.call_soon_threadsafe(future.set_exception, ex)
 
     def _check_running(self):
@@ -998,7 +992,8 @@ class BaseEventLoop(events.AbstractEventLoop):
                     except OSError as exc:
                         msg = (
                             f'error while attempting to bind on '
-                            f'address {laddr!r}: {str(exc).lower()}'
+                            f'address {laddr!r}: '
+                            f'{exc.strerror.lower()}'
                         )
                         exc = OSError(exc.errno, msg)
                         my_exceptions.append(exc)
@@ -1110,18 +1105,11 @@ class BaseEventLoop(events.AbstractEventLoop):
                     except OSError:
                         continue
             else:  # using happy eyeballs
-                sock = (await staggered.staggered_race(
-                    (
-                        # can't use functools.partial as it keeps a reference
-                        # to exceptions
-                        lambda addrinfo=addrinfo: self._connect_sock(
-                            exceptions, addrinfo, laddr_infos
-                        )
-                        for addrinfo in infos
-                    ),
-                    happy_eyeballs_delay,
-                    loop=self,
-                ))[0]  # can't use sock, _, _ as it keeks a reference to exceptions
+                sock, _, _ = await staggered.staggered_race(
+                    (functools.partial(self._connect_sock,
+                                       exceptions, addrinfo, laddr_infos)
+                     for addrinfo in infos),
+                    happy_eyeballs_delay, loop=self)
 
             if sock is None:
                 exceptions = [exc for sub in exceptions for exc in sub]
@@ -1264,8 +1252,8 @@ class BaseEventLoop(events.AbstractEventLoop):
                 read = await self.run_in_executor(None, file.readinto, view)
                 if not read:
                     return total_sent  # EOF
-                transp.write(view[:read])
                 await proto.drain()
+                transp.write(view[:read])
                 total_sent += read
         finally:
             if total_sent > 0 and hasattr(file, 'seek'):
@@ -1555,9 +1543,7 @@ class BaseEventLoop(events.AbstractEventLoop):
                     if reuse_address:
                         sock.setsockopt(
                             socket.SOL_SOCKET, socket.SO_REUSEADDR, True)
-                    # Since Linux 6.12.9, SO_REUSEPORT is not allowed
-                    # on other address families than AF_INET/AF_INET6.
-                    if reuse_port and af in (socket.AF_INET, socket.AF_INET6):
+                    if reuse_port:
                         _set_reuseport(sock)
                     # Disable IPv4/IPv6 dual stack support (enabled by
                     # default on Linux) which makes a single socket
@@ -1573,7 +1559,7 @@ class BaseEventLoop(events.AbstractEventLoop):
                     except OSError as err:
                         msg = ('error while attempting '
                                'to bind on address %r: %s'
-                               % (sa, str(err).lower()))
+                               % (sa, err.strerror.lower()))
                         if err.errno == errno.EADDRNOTAVAIL:
                             # Assume the family is not enabled (bpo-30945)
                             sockets.pop()

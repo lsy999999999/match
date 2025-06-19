@@ -1246,14 +1246,9 @@ class _Unparser(NodeVisitor):
                     fallback_to_repr = True
                     break
                 quote_types = new_quote_types
-            else:
-                if "\n" in value:
-                    quote_types = [q for q in quote_types if q in _MULTI_QUOTES]
-                    assert quote_types
-
-                new_quote_types = [q for q in quote_types if q not in value]
-                if new_quote_types:
-                    quote_types = new_quote_types
+            elif "\n" in value:
+                quote_types = [q for q in quote_types if q in _MULTI_QUOTES]
+                assert quote_types
             new_fstring_parts.append(value)
 
         if fallback_to_repr:
@@ -1273,18 +1268,14 @@ class _Unparser(NodeVisitor):
         quote_type = quote_types[0]
         self.write(f"{quote_type}{value}{quote_type}")
 
-    def _write_fstring_inner(self, node, is_format_spec=False):
+    def _write_fstring_inner(self, node, scape_newlines=False):
         if isinstance(node, JoinedStr):
             # for both the f-string itself, and format_spec
             for value in node.values:
-                self._write_fstring_inner(value, is_format_spec=is_format_spec)
+                self._write_fstring_inner(value, scape_newlines=scape_newlines)
         elif isinstance(node, Constant) and isinstance(node.value, str):
             value = node.value.replace("{", "{{").replace("}", "}}")
-
-            if is_format_spec:
-                value = value.replace("\\", "\\\\")
-                value = value.replace("'", "\\'")
-                value = value.replace('"', '\\"')
+            if scape_newlines:
                 value = value.replace("\n", "\\n")
             self.write(value)
         elif isinstance(node, FormattedValue):
@@ -1308,7 +1299,10 @@ class _Unparser(NodeVisitor):
                 self.write(f"!{chr(node.conversion)}")
             if node.format_spec:
                 self.write(":")
-                self._write_fstring_inner(node.format_spec, is_format_spec=True)
+                self._write_fstring_inner(
+                    node.format_spec,
+                    scape_newlines=True
+                )
 
     def visit_Name(self, node):
         self.write(node.id)

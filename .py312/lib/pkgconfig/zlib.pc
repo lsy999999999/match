@@ -1,8 +1,8 @@
 prefix=/home/lsy/match/.py312
-exec_prefix=/home/lsy/match/.py312
-libdir=/home/lsy/match/.py312/lib
-sharedlibdir=/home/lsy/match/.py312/lib
-includedir=/home/lsy/match/.py312/include
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+sharedlibdir=${libdir}
+includedir=${prefix}/include
 
 Name: zlib
 Description: zlib compression library

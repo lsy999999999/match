@@ -11,9 +11,15 @@ except ImportError:
           "Your Python may not be configured for Tk. **", file=sys.__stderr__)
     raise SystemExit(1)
 
+# Valid arguments for the ...Awareness call below are defined in the following.
+# https://msdn.microsoft.com/en-us/library/windows/desktop/dn280512(v=vs.85).aspx
 if sys.platform == 'win32':
-    from idlelib.util import fix_win_hidpi
-    fix_win_hidpi()
+    try:
+        import ctypes
+        PROCESS_SYSTEM_DPI_AWARE = 1  # Int required.
+        ctypes.OleDLL('shcore').SetProcessDpiAwareness(PROCESS_SYSTEM_DPI_AWARE)
+    except (ImportError, AttributeError, OSError):
+        pass
 
 from tkinter import messagebox
 
@@ -706,7 +712,7 @@ class ModifiedInterpreter(InteractiveInterpreter):
             del _filename, _sys, _dirname, _dir
             \n""".format(filename))
 
-    def showsyntaxerror(self, filename=None, **kwargs):
+    def showsyntaxerror(self, filename=None):
         """Override Interactive Interpreter method: Use Colorizing
 
         Color the offending position instead of printing it and pointing at it
@@ -1131,7 +1137,8 @@ class PyShell(OutputWindow):
     def short_title(self):
         return self.shell_title
 
-    SPLASHLINE = 'Enter "help" below or click "Help" above for more information.'
+    COPYRIGHT = \
+          'Type "help", "copyright", "credits" or "license()" for more information.'
 
     def begin(self):
         self.text.mark_set("iomark", "insert")
@@ -1150,7 +1157,7 @@ class PyShell(OutputWindow):
             sys.displayhook = rpc.displayhook
 
         self.write("Python %s on %s\n%s\n%s" %
-                   (sys.version, sys.platform, self.SPLASHLINE, nosub))
+                   (sys.version, sys.platform, self.COPYRIGHT, nosub))
         self.text.focus_force()
         self.showprompt()
         # User code should use separate default Tk root window

@@ -29,10 +29,10 @@ MODLIBS=           $(LOCALMODLIBS) $(BASEMODLIBS)
 
 # === Variables set by configure
 VERSION=	3.12
-srcdir=		/croot/python-split_1749128176179/work
-VPATH=		/croot/python-split_1749128176179/work
-abs_srcdir=	/croot/python-split_1749128176179/work
-abs_builddir=	/croot/python-split_1749128176179/work/build-static
+srcdir=		/home/conda/feedstock_root/build_artifacts/python-split_1708115583107/work
+VPATH=		/home/conda/feedstock_root/build_artifacts/python-split_1708115583107/work
+abs_srcdir=	/home/conda/feedstock_root/build_artifacts/python-split_1708115583107/work
+abs_builddir=	/home/conda/feedstock_root/build_artifacts/python-split_1708115583107/work/build-static
 
 
 CC=		x86_64-conda-linux-gnu-gcc -pthread
@@ -80,13 +80,13 @@ MAKESETUP=      $(srcdir)/Modules/makesetup
 
 # Compiler options
 OPT=		-DNDEBUG -O2 -Wall
-BASECFLAGS=	 -fno-strict-overflow -Wsign-compare
+BASECFLAGS=	 -fno-strict-overflow
 BASECPPFLAGS=	-IObjects -IInclude -IPython
-CONFIGURE_CFLAGS=	-march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/lsy/match/.py312/include -fdebug-prefix-map=/croot/python-split_1749128176179/work=/usr/local/src/conda/python-3.12.11 -fdebug-prefix-map=/home/lsy/match/.py312=/usr/local/src/conda-prefix    
+CONFIGURE_CFLAGS=	-march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/lsy/match/.py312/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/python-split_1708115583107/work=/usr/local/src/conda/python-3.12.2 -fdebug-prefix-map=/home/lsy/match/.py312=/usr/local/src/conda-prefix    
 # CFLAGS_NODIST is used for building the interpreter and stdlib C extensions.
 # Use it when a compiler flag should _not_ be part of the distutils CFLAGS
 # once Python is installed (Issue #21121).
-CONFIGURE_CFLAGS_NODIST= -fno-semantic-interposition     -g -std=c11 -Wextra -Wno-unused-parameter -Wno-missing-field-initializers -Wstrict-prototypes -Werror=implicit-function-declaration -fvisibility=hidden
+CONFIGURE_CFLAGS_NODIST= -fno-semantic-interposition     -g -std=c11 -Werror=implicit-function-declaration -fvisibility=hidden
 # LDFLAGS_NODIST is used in the same manner as CFLAGS_NODIST.
 # Use it when a linker flag should _not_ be part of the distutils LDFLAGS
 # once Python is installed (bpo-35257)
@@ -95,7 +95,7 @@ CONFIGURE_LDFLAGS_NODIST= -fno-semantic-interposition     -g
 # of _bootstrap_python and _freeze_module tools, which don't need LTO.
 CONFIGURE_LDFLAGS_NOLTO=-fno-lto
 CONFIGURE_CPPFLAGS=	-DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/lsy/match/.py312/include -I/home/lsy/match/.py312/include
-CONFIGURE_LDFLAGS=	-Wl,-O2 -Wl,--sort-common -Wl,--as-needed -Wl,-z,relro -Wl,-z,now -Wl,--disable-new-dtags -Wl,--gc-sections -Wl,-rpath,/home/lsy/match/.py312/lib -Wl,-rpath-link,/home/lsy/match/.py312/lib -L/home/lsy/match/.py312/lib
+CONFIGURE_LDFLAGS=	-Wl,-O2 -Wl,--sort-common -Wl,--as-needed -Wl,-z,relro -Wl,-z,now -Wl,--disable-new-dtags -Wl,--gc-sections -Wl,--allow-shlib-undefined -Wl,-rpath,/home/lsy/match/.py312/lib -Wl,-rpath-link,/home/lsy/match/.py312/lib -L/home/lsy/match/.py312/lib
 # Avoid assigning CFLAGS, LDFLAGS, etc. so users can use them on the
 # command line to append to these values without stomping the pre-set
 # values.
@@ -167,7 +167,7 @@ SHLIB_SUFFIX=	.so
 EXT_SUFFIX=	.cpython-312-x86_64-linux-gnu.so
 LDSHARED=	$(CC) -shared $(PY_LDFLAGS)
 BLDSHARED=	$(CC) -shared $(PY_CORE_LDFLAGS)
-LDCXXSHARED=	$(CXX) -shared $(PY_LDFLAGS)
+LDCXXSHARED=	$(CXX) -shared
 DESTSHARED=	$(BINLIBDEST)/lib-dynload
 
 # List of exported symbols for AIX
@@ -247,7 +247,7 @@ MODULE__MULTIPROCESSING_STATE=yes
 MODULE__MULTIPROCESSING_CFLAGS=-I$(srcdir)/Modules/_multiprocessing
 MODULE__POSIXSHMEM_STATE=yes
 MODULE__POSIXSHMEM_CFLAGS=-I$(srcdir)/Modules/_multiprocessing
-MODULE__POSIXSHMEM_LDFLAGS=-lrt
+MODULE__POSIXSHMEM_LDFLAGS=
 MODULE_AUDIOOP_STATE=yes
 MODULE_AUDIOOP_LDFLAGS=-lm
 MODULE__STATISTICS_STATE=yes
@@ -295,18 +295,18 @@ MODULE__BLAKE2_STATE=yes
 MODULE__BLAKE2_CFLAGS=
 MODULE__BLAKE2_LDFLAGS=
 MODULE__CRYPT_STATE=yes
-MODULE__CRYPT_CFLAGS=
-MODULE__CRYPT_LDFLAGS=-lcrypt
+MODULE__CRYPT_CFLAGS=-I/home/lsy/match/.py312/include
+MODULE__CRYPT_LDFLAGS=-L/home/lsy/match/.py312/lib -lcrypt
 MODULE__CTYPES_STATE=yes
 MODULE__CTYPES_CFLAGS=-fno-strict-overflow -I/home/lsy/match/.py312/include
 MODULE__CTYPES_LDFLAGS=-L/home/lsy/match/.py312/lib -lffi -ldl
 MODULE__CURSES_STATE=yes
 MODULE__CURSES_CFLAGS=-D_GNU_SOURCE -DNCURSES_WIDECHAR -I/home/lsy/match/.py312/include/ncursesw -I/home/lsy/match/.py312/include
-MODULE__CURSES_LDFLAGS=-L/home/lsy/match/.py312/lib -Wl,-O2 -Wl,--sort-common -Wl,--disable-new-dtags -Wl,--gc-sections -Wl,-rpath,/home/lsy/match/.py312/lib -Wl,-rpath-link,/home/lsy/match/.py312/lib -lncursesw -ltinfow
+MODULE__CURSES_LDFLAGS=-L/home/lsy/match/.py312/lib -Wl,-O2 -Wl,--sort-common -Wl,--disable-new-dtags -Wl,--gc-sections -Wl,--allow-shlib-undefined -Wl,-rpath,/home/lsy/match/.py312/lib -Wl,-rpath-link,/home/lsy/match/.py312/lib -lncursesw -ltinfow
 
 MODULE__CURSES_PANEL_STATE=yes
 MODULE__CURSES_PANEL_CFLAGS=-D_GNU_SOURCE -DNCURSES_WIDECHAR -D_GNU_SOURCE -DNCURSES_WIDECHAR -I/home/lsy/match/.py312/include/ncursesw -I/home/lsy/match/.py312/include -I/home/lsy/match/.py312/include/ncursesw -I/home/lsy/match/.py312/include -D_GNU_SOURCE -DNCURSES_WIDECHAR -I/home/lsy/match/.py312/include/ncursesw -I/home/lsy/match/.py312/include
-MODULE__CURSES_PANEL_LDFLAGS=-L/home/lsy/match/.py312/lib -Wl,-O2 -Wl,--sort-common -Wl,--disable-new-dtags -Wl,--gc-sections -Wl,-rpath,/home/lsy/match/.py312/lib -Wl,-rpath-link,/home/lsy/match/.py312/lib -lpanelw -L/home/lsy/match/.py312/lib -Wl,-O2 -Wl,--sort-common -Wl,--disable-new-dtags -Wl,--gc-sections -Wl,-rpath,/home/lsy/match/.py312/lib -Wl,-rpath-link,/home/lsy/match/.py312/lib -lncursesw -ltinfow
+MODULE__CURSES_PANEL_LDFLAGS=-L/home/lsy/match/.py312/lib -Wl,-O2 -Wl,--sort-common -Wl,--disable-new-dtags -Wl,--gc-sections -Wl,--allow-shlib-undefined -Wl,-rpath,/home/lsy/match/.py312/lib -Wl,-rpath-link,/home/lsy/match/.py312/lib -lpanelw -L/home/lsy/match/.py312/lib -Wl,-O2 -Wl,--sort-common -Wl,--disable-new-dtags -Wl,--gc-sections -Wl,--allow-shlib-undefined -Wl,-rpath,/home/lsy/match/.py312/lib -Wl,-rpath-link,/home/lsy/match/.py312/lib -lncursesw -ltinfow
 
 MODULE__DECIMAL_STATE=yes
 MODULE__DECIMAL_CFLAGS=-I$(srcdir)/Modules/_decimal/libmpdec -DCONFIG_64=1 -DANSI=1 -DHAVE_UINT128_T=1
@@ -317,8 +317,8 @@ MODULE_NIS_STATE=yes
 MODULE_NIS_CFLAGS=
 MODULE_NIS_LDFLAGS=-lnsl
 MODULE_READLINE_STATE=yes
-MODULE_READLINE_CFLAGS=
-MODULE_READLINE_LDFLAGS=-lreadline
+MODULE_READLINE_CFLAGS=-D_GNU_SOURCE -I/home/lsy/match/.py312/include -I/home/lsy/match/.py312/include/ncurses -I/home/lsy/match/.py312/include
+MODULE_READLINE_LDFLAGS=-L/home/lsy/match/.py312/lib -lreadline
 MODULE__SQLITE3_STATE=yes
 MODULE__SQLITE3_CFLAGS=-I/home/lsy/match/.py312/include -I$(srcdir)/Modules/_sqlite
 MODULE__SQLITE3_LDFLAGS=-L/home/lsy/match/.py312/lib -lsqlite3
@@ -370,7 +370,7 @@ EXEMODE=	755
 FILEMODE=	644
 
 # configure script arguments
-CONFIG_ARGS=	 '--prefix=/home/lsy/match/.py312' '--build=x86_64-conda-linux-gnu' '--host=x86_64-conda-linux-gnu' '--enable-ipv6' '--with-ensurepip=no' '--with-tzpath=/home/lsy/match/.py312/share/zoneinfo' '--with-computed-gotos' '--with-system-expat' '--enable-loadable-sqlite-extensions' '--with-tcltk-includes=-I/home/lsy/match/.py312/include' '--with-tcltk-libs=-L/home/lsy/match/.py312/lib -ltcl8.6 -ltk8.6' '--with-platlibdir=lib' '--with-lto=full' '--enable-optimizations' '-oldincludedir=/croot/python-split_1749128176179/_build_env/x86_64-conda-linux-gnu/sysroot/usr/include' '--disable-shared' 'PROFILE_TASK=-m test --pgo' 'build_alias=x86_64-conda-linux-gnu' 'host_alias=x86_64-conda-linux-gnu' 'PKG_CONFIG_PATH=/home/lsy/match/.py312/lib/pkgconfig' 'MACHDEP=linux' 'CC=x86_64-conda-linux-gnu-gcc' 'CFLAGS=-march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/lsy/match/.py312/include -fdebug-prefix-map=/croot/python-split_1749128176179/work=/usr/local/src/conda/python-3.12.11 -fdebug-prefix-map=/home/lsy/match/.py312=/usr/local/src/conda-prefix    ' 'LDFLAGS=-Wl,-O2 -Wl,--sort-common -Wl,--as-needed -Wl,-z,relro -Wl,-z,now -Wl,--disable-new-dtags -Wl,--gc-sections -Wl,-rpath,/home/lsy/match/.py312/lib -Wl,-rpath-link,/home/lsy/match/.py312/lib -L/home/lsy/match/.py312/lib' 'CPPFLAGS=-DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/lsy/match/.py312/include -I/home/lsy/match/.py312/include' 'CPP=/croot/python-split_1749128176179/_build_env/bin/x86_64-conda-linux-gnu-cpp'
+CONFIG_ARGS=	 '--prefix=/home/lsy/match/.py312' '--build=x86_64-conda-linux-gnu' '--host=x86_64-conda-linux-gnu' '--enable-ipv6' '--with-ensurepip=no' '--with-tzpath=/home/lsy/match/.py312/share/zoneinfo' '--with-computed-gotos' '--with-system-expat' '--enable-loadable-sqlite-extensions' '--with-tcltk-includes=-I/home/lsy/match/.py312/include' '--with-tcltk-libs=-L/home/lsy/match/.py312/lib -ltcl8.6 -ltk8.6' '--with-platlibdir=lib' '--with-lto=full' '--enable-optimizations' '-oldincludedir=/home/conda/feedstock_root/build_artifacts/python-split_1708115583107/_build_env/x86_64-conda-linux-gnu/sysroot/usr/include' '--disable-shared' 'PROFILE_TASK=-m test --pgo' 'build_alias=x86_64-conda-linux-gnu' 'host_alias=x86_64-conda-linux-gnu' 'PKG_CONFIG_PATH=/home/lsy/match/.py312/lib/pkgconfig' 'MACHDEP=linux' 'CC=x86_64-conda-linux-gnu-gcc' 'CFLAGS=-march=nocona -mtune=haswell -ftree-vectorize -fPIC -fstack-protector-strong -fno-plt -O2 -ffunction-sections -pipe -isystem /home/lsy/match/.py312/include -fdebug-prefix-map=/home/conda/feedstock_root/build_artifacts/python-split_1708115583107/work=/usr/local/src/conda/python-3.12.2 -fdebug-prefix-map=/home/lsy/match/.py312=/usr/local/src/conda-prefix    ' 'LDFLAGS=-Wl,-O2 -Wl,--sort-common -Wl,--as-needed -Wl,-z,relro -Wl,-z,now -Wl,--disable-new-dtags -Wl,--gc-sections -Wl,--allow-shlib-undefined -Wl,-rpath,/home/lsy/match/.py312/lib -Wl,-rpath-link,/home/lsy/match/.py312/lib -L/home/lsy/match/.py312/lib' 'CPPFLAGS=-DNDEBUG -D_FORTIFY_SOURCE=2 -O2 -isystem /home/lsy/match/.py312/include -I/home/lsy/match/.py312/include' 'CPP=/home/conda/feedstock_root/build_artifacts/python-split_1708115583107/_build_env/bin/x86_64-conda-linux-gnu-cpp'
 
 
 # Subdirectories with code
@@ -420,7 +420,7 @@ BUILDPYTHON=	python$(BUILDEXE)
 
 HOSTRUNNER= 
 
-PYTHON_FOR_REGEN?=python3
+PYTHON_FOR_REGEN?=python3.10
 UPDATE_FILE=$(PYTHON_FOR_REGEN) $(srcdir)/Tools/build/update_file.py
 PYTHON_FOR_BUILD=./$(BUILDPYTHON) -E
 # Single-platform builds depend on $(BUILDPYTHON). Cross builds use an
@@ -729,9 +729,7 @@ LIBEXPAT_HEADERS= \
 		Modules/expat/utf8tab.h \
 		Modules/expat/xmlrole.h \
 		Modules/expat/xmltok.h \
-		Modules/expat/xmltok_impl.h \
-		Modules/expat/xmltok_impl.c \
-		Modules/expat/xmltok_ns.c
+		Modules/expat/xmltok_impl.h
 
 ##########################################################################
 # hashlib's HACL* library
@@ -832,8 +830,8 @@ profile-opt: profile-run-stamp
 # List of binaries that BOLT runs on.
 BOLT_BINARIES := $(BUILDPYTHON)
 
-BOLT_INSTRUMENT_FLAGS :=  -update-debug-sections -skip-funcs=_PyEval_EvalFrameDefault,sre_ucs1_match/1,sre_ucs2_match/1,sre_ucs4_match/1 
-BOLT_APPLY_FLAGS :=   -update-debug-sections -skip-funcs=_PyEval_EvalFrameDefault,sre_ucs1_match/1,sre_ucs2_match/1,sre_ucs4_match/1  -reorder-blocks=ext-tsp -reorder-functions=cdsort -split-functions -icf=1 -inline-all -split-eh -reorder-functions-use-hot-size -peepholes=none -jump-tables=aggressive -inline-ap -indirect-call-promotion=all -dyno-stats -use-gnu-stack -frame-opt=hot 
+BOLT_INSTRUMENT_FLAGS := 
+BOLT_APPLY_FLAGS :=  -update-debug-sections -reorder-blocks=ext-tsp -reorder-functions=hfsort+ -split-functions -icf=1 -inline-all -split-eh -reorder-functions-use-hot-size -peepholes=none -jump-tables=aggressive -inline-ap -indirect-call-promotion=all -dyno-stats -use-gnu-stack -frame-opt=hot 
 
 .PHONY: clean-bolt
 clean-bolt:
@@ -1146,7 +1144,7 @@ sharedmods: $(SHAREDMODS) pybuilddir.txt
 # dependency on BUILDPYTHON ensures that the target is run last
 .PHONY: checksharedmods
 checksharedmods: sharedmods $(PYTHON_FOR_BUILD_DEPS) $(BUILDPYTHON)
-	@$(RUNSHARED) $(PYTHON_FOR_BUILD) $(srcdir)/Tools/build/check_extension_modules.py
+	@$(RUNSHARED) $(srcdir)/if_runnable.sh $(PYTHON_FOR_BUILD) $(srcdir)/Tools/build/check_extension_modules.py
 
 .PHONY: rundsymutil
 rundsymutil: sharedmods $(PYTHON_FOR_BUILD_DEPS) $(BUILDPYTHON)
@@ -1473,9 +1471,9 @@ regen-limited-abi: all
 regen-all: regen-cases regen-opcode regen-opcode-targets regen-typeslots \
 	regen-token regen-ast regen-keyword regen-sre regen-frozen \
 	regen-pegen-metaparser regen-pegen regen-test-frozenmain \
-	regen-test-levenshtein regen-global-objects
+	regen-test-levenshtein regen-global-objects regen-sbom
 	@echo
-	@echo "Note: make regen-stdlib-module-names, make-regen-sbom, and make regen-configure should be run manually"
+	@echo "Note: make regen-stdlib-module-names and make regen-configure should be run manually"
 
 ############################################################################
 # Special rules for object files
@@ -1725,7 +1723,7 @@ Python/frozen.o: $(FROZEN_FILES_OUT)
 # an include guard, so we can't use a pipeline to transform its output.
 Include/pydtrace_probes.h: $(srcdir)/Include/pydtrace.d
 	$(MKDIR_P) Include
-	CC="$(CC)" CFLAGS="$(CFLAGS)" $(DTRACE) $(DFLAGS) -o $@ -h -s $<
+	$(DTRACE) $(DFLAGS) -o $@ -h -s $<
 	: sed in-place edit with POSIX-only tools
 	sed 's/PYTHON_/PyDTrace_/' $@ > $@.tmp
 	mv $@.tmp $@
@@ -1735,7 +1733,7 @@ Python/import.o: $(srcdir)/Include/pydtrace.h
 Modules/gcmodule.o: $(srcdir)/Include/pydtrace.h
 
 Python/pydtrace.o: $(srcdir)/Include/pydtrace.d $(DTRACE_DEPS)
-	CC="$(CC)" CFLAGS="$(CFLAGS)" $(DTRACE) $(DFLAGS) -o $@ -G -s $< $(DTRACE_DEPS)
+	$(DTRACE) $(DFLAGS) -o $@ -G -s $< $(DTRACE_DEPS)
 
 Objects/typeobject.o: Objects/typeslots.inc
 
@@ -2271,7 +2269,6 @@ LIBSUBDIRS=	asyncio \
 		__phello__
 TESTSUBDIRS=	idlelib/idle_test \
 		test \
-		test/test_ast \
 		test/audiodata \
 		test/certdata \
 		test/certdata/capath \
@@ -2294,7 +2291,6 @@ TESTSUBDIRS=	idlelib/idle_test \
 		test/support/_hypothesis_stubs \
 		test/test_asyncio \
 		test/test_capi \
-		test/test_cext \
 		test/test_cppext \
 		test/test_ctypes \
 		test/test_dataclasses \
@@ -2312,8 +2308,6 @@ TESTSUBDIRS=	idlelib/idle_test \
 		test/test_import/data/circular_imports/subpkg2/parent \
 		test/test_import/data/package \
 		test/test_import/data/package2 \
-		test/test_import/data/package3 \
-		test/test_import/data/package4 \
 		test/test_import/data/unwritable \
 		test/test_importlib \
 		test/test_importlib/builtin \
@@ -2365,7 +2359,6 @@ TESTSUBDIRS=	idlelib/idle_test \
 		test/test_lib2to3/data/fixers/myfixes \
 		test/test_module \
 		test/test_peg_generator \
-		test/test_pydoc \
 		test/test_sqlite3 \
 		test/test_tkinter \
 		test/test_tomllib \
@@ -2387,8 +2380,6 @@ TESTSUBDIRS=	idlelib/idle_test \
 		test/test_tomllib/data/valid/dates-and-times \
 		test/test_tomllib/data/valid/multiline-basic-str \
 		test/test_tools \
-		test/test_tools/i18n_data \
-		test/test_tools/msgfmt_data \
 		test/test_ttk \
 		test/test_unittest \
 		test/test_unittest/testmock \
@@ -2400,19 +2391,11 @@ TESTSUBDIRS=	idlelib/idle_test \
 		test/test_zoneinfo/data \
 		test/tokenizedata \
 		test/tracedmodules \
-		test/translationdata \
-		test/translationdata/argparse \
-		test/translationdata/getopt \
-		test/translationdata/optparse \
 		test/typinganndata \
 		test/wheeldata \
 		test/xmltestdata \
 		test/xmltestdata/c14n-20 \
-		test/ziptestdata \
-		test/test_concurrent_futures \
-		test/test_multiprocessing_fork \
-		test/test_multiprocessing_forkserver \
-		test/test_multiprocessing_spawn
+		test/ziptestdata
 
 COMPILEALL_OPTS=-j0
 
@@ -3179,16 +3162,13 @@ Modules/_testcapi/exceptions.o: $(srcdir)/Modules/_testcapi/exceptions.c $(MODUL
 Modules/_testcapi/code.o: $(srcdir)/Modules/_testcapi/code.c $(MODULE__TESTCAPI_DEPS) $(MODULE_DEPS_SHARED) $(PYTHON_HEADERS); $(CC) $(MODULE__TESTCAPI_CFLAGS) $(PY_STDMODULE_CFLAGS) $(CCSHARED) -c $(srcdir)/Modules/_testcapi/code.c -o Modules/_testcapi/code.o
 Modules/_testcapi/buffer.o: $(srcdir)/Modules/_testcapi/buffer.c $(MODULE__TESTCAPI_DEPS) $(MODULE_DEPS_SHARED) $(PYTHON_HEADERS); $(CC) $(MODULE__TESTCAPI_CFLAGS) $(PY_STDMODULE_CFLAGS) $(CCSHARED) -c $(srcdir)/Modules/_testcapi/buffer.c -o Modules/_testcapi/buffer.o
 Modules/_testcapi/pyos.o: $(srcdir)/Modules/_testcapi/pyos.c $(MODULE__TESTCAPI_DEPS) $(MODULE_DEPS_SHARED) $(PYTHON_HEADERS); $(CC) $(MODULE__TESTCAPI_CFLAGS) $(PY_STDMODULE_CFLAGS) $(CCSHARED) -c $(srcdir)/Modules/_testcapi/pyos.c -o Modules/_testcapi/pyos.o
-Modules/_testcapi/run.o: $(srcdir)/Modules/_testcapi/run.c $(MODULE__TESTCAPI_DEPS) $(MODULE_DEPS_SHARED) $(PYTHON_HEADERS); $(CC) $(MODULE__TESTCAPI_CFLAGS) $(PY_STDMODULE_CFLAGS) $(CCSHARED) -c $(srcdir)/Modules/_testcapi/run.c -o Modules/_testcapi/run.o
 Modules/_testcapi/file.o: $(srcdir)/Modules/_testcapi/file.c $(MODULE__TESTCAPI_DEPS) $(MODULE_DEPS_SHARED) $(PYTHON_HEADERS); $(CC) $(MODULE__TESTCAPI_CFLAGS) $(PY_STDMODULE_CFLAGS) $(CCSHARED) -c $(srcdir)/Modules/_testcapi/file.c -o Modules/_testcapi/file.o
 Modules/_testcapi/codec.o: $(srcdir)/Modules/_testcapi/codec.c $(MODULE__TESTCAPI_DEPS) $(MODULE_DEPS_SHARED) $(PYTHON_HEADERS); $(CC) $(MODULE__TESTCAPI_CFLAGS) $(PY_STDMODULE_CFLAGS) $(CCSHARED) -c $(srcdir)/Modules/_testcapi/codec.c -o Modules/_testcapi/codec.o
 Modules/_testcapi/immortal.o: $(srcdir)/Modules/_testcapi/immortal.c $(MODULE__TESTCAPI_DEPS) $(MODULE_DEPS_SHARED) $(PYTHON_HEADERS); $(CC) $(MODULE__TESTCAPI_CFLAGS) $(PY_STDMODULE_CFLAGS) $(CCSHARED) -c $(srcdir)/Modules/_testcapi/immortal.c -o Modules/_testcapi/immortal.o
 Modules/_testcapi/heaptype_relative.o: $(srcdir)/Modules/_testcapi/heaptype_relative.c $(MODULE__TESTCAPI_DEPS) $(MODULE_DEPS_SHARED) $(PYTHON_HEADERS); $(CC) $(MODULE__TESTCAPI_CFLAGS) $(PY_STDMODULE_CFLAGS) $(CCSHARED) -c $(srcdir)/Modules/_testcapi/heaptype_relative.c -o Modules/_testcapi/heaptype_relative.o
 Modules/_testcapi/gc.o: $(srcdir)/Modules/_testcapi/gc.c $(MODULE__TESTCAPI_DEPS) $(MODULE_DEPS_SHARED) $(PYTHON_HEADERS); $(CC) $(MODULE__TESTCAPI_CFLAGS) $(PY_STDMODULE_CFLAGS) $(CCSHARED) -c $(srcdir)/Modules/_testcapi/gc.c -o Modules/_testcapi/gc.o
 Modules/_testcapi/sys.o: $(srcdir)/Modules/_testcapi/sys.c $(MODULE__TESTCAPI_DEPS) $(MODULE_DEPS_SHARED) $(PYTHON_HEADERS); $(CC) $(MODULE__TESTCAPI_CFLAGS) $(PY_STDMODULE_CFLAGS) $(CCSHARED) -c $(srcdir)/Modules/_testcapi/sys.c -o Modules/_testcapi/sys.o
-Modules/_testcapi/import.o: $(srcdir)/Modules/_testcapi/import.c $(MODULE__TESTCAPI_DEPS) $(MODULE_DEPS_SHARED) $(PYTHON_HEADERS); $(CC) $(MODULE__TESTCAPI_CFLAGS) $(PY_STDMODULE_CFLAGS) $(CCSHARED) -c $(srcdir)/Modules/_testcapi/import.c -o Modules/_testcapi/import.o
-Modules/_testcapi/eval.o: $(srcdir)/Modules/_testcapi/eval.c $(MODULE__TESTCAPI_DEPS) $(MODULE_DEPS_SHARED) $(PYTHON_HEADERS); $(CC) $(MODULE__TESTCAPI_CFLAGS) $(PY_STDMODULE_CFLAGS) $(CCSHARED) -c $(srcdir)/Modules/_testcapi/eval.c -o Modules/_testcapi/eval.o
-Modules/_testcapi$(EXT_SUFFIX):  Modules/_testcapimodule.o Modules/_testcapi/vectorcall.o Modules/_testcapi/vectorcall_limited.o Modules/_testcapi/heaptype.o Modules/_testcapi/abstract.o Modules/_testcapi/bytearray.o Modules/_testcapi/bytes.o Modules/_testcapi/unicode.o Modules/_testcapi/dict.o Modules/_testcapi/set.o Modules/_testcapi/list.o Modules/_testcapi/tuple.o Modules/_testcapi/getargs.o Modules/_testcapi/pytime.o Modules/_testcapi/datetime.o Modules/_testcapi/docstring.o Modules/_testcapi/mem.o Modules/_testcapi/watchers.o Modules/_testcapi/long.o Modules/_testcapi/float.o Modules/_testcapi/complex.o Modules/_testcapi/numbers.o Modules/_testcapi/structmember.o Modules/_testcapi/exceptions.o Modules/_testcapi/code.o Modules/_testcapi/buffer.o Modules/_testcapi/pyos.o Modules/_testcapi/run.o Modules/_testcapi/file.o Modules/_testcapi/codec.o Modules/_testcapi/immortal.o Modules/_testcapi/heaptype_relative.o Modules/_testcapi/gc.o Modules/_testcapi/sys.o Modules/_testcapi/import.o Modules/_testcapi/eval.o; $(BLDSHARED)  Modules/_testcapimodule.o Modules/_testcapi/vectorcall.o Modules/_testcapi/vectorcall_limited.o Modules/_testcapi/heaptype.o Modules/_testcapi/abstract.o Modules/_testcapi/bytearray.o Modules/_testcapi/bytes.o Modules/_testcapi/unicode.o Modules/_testcapi/dict.o Modules/_testcapi/set.o Modules/_testcapi/list.o Modules/_testcapi/tuple.o Modules/_testcapi/getargs.o Modules/_testcapi/pytime.o Modules/_testcapi/datetime.o Modules/_testcapi/docstring.o Modules/_testcapi/mem.o Modules/_testcapi/watchers.o Modules/_testcapi/long.o Modules/_testcapi/float.o Modules/_testcapi/complex.o Modules/_testcapi/numbers.o Modules/_testcapi/structmember.o Modules/_testcapi/exceptions.o Modules/_testcapi/code.o Modules/_testcapi/buffer.o Modules/_testcapi/pyos.o Modules/_testcapi/run.o Modules/_testcapi/file.o Modules/_testcapi/codec.o Modules/_testcapi/immortal.o Modules/_testcapi/heaptype_relative.o Modules/_testcapi/gc.o Modules/_testcapi/sys.o Modules/_testcapi/import.o Modules/_testcapi/eval.o $(MODULE__TESTCAPI_LDFLAGS)  -o Modules/_testcapi$(EXT_SUFFIX)
+Modules/_testcapi$(EXT_SUFFIX):  Modules/_testcapimodule.o Modules/_testcapi/vectorcall.o Modules/_testcapi/vectorcall_limited.o Modules/_testcapi/heaptype.o Modules/_testcapi/abstract.o Modules/_testcapi/bytearray.o Modules/_testcapi/bytes.o Modules/_testcapi/unicode.o Modules/_testcapi/dict.o Modules/_testcapi/set.o Modules/_testcapi/list.o Modules/_testcapi/tuple.o Modules/_testcapi/getargs.o Modules/_testcapi/pytime.o Modules/_testcapi/datetime.o Modules/_testcapi/docstring.o Modules/_testcapi/mem.o Modules/_testcapi/watchers.o Modules/_testcapi/long.o Modules/_testcapi/float.o Modules/_testcapi/complex.o Modules/_testcapi/numbers.o Modules/_testcapi/structmember.o Modules/_testcapi/exceptions.o Modules/_testcapi/code.o Modules/_testcapi/buffer.o Modules/_testcapi/pyos.o Modules/_testcapi/file.o Modules/_testcapi/codec.o Modules/_testcapi/immortal.o Modules/_testcapi/heaptype_relative.o Modules/_testcapi/gc.o Modules/_testcapi/sys.o; $(BLDSHARED)  Modules/_testcapimodule.o Modules/_testcapi/vectorcall.o Modules/_testcapi/vectorcall_limited.o Modules/_testcapi/heaptype.o Modules/_testcapi/abstract.o Modules/_testcapi/bytearray.o Modules/_testcapi/bytes.o Modules/_testcapi/unicode.o Modules/_testcapi/dict.o Modules/_testcapi/set.o Modules/_testcapi/list.o Modules/_testcapi/tuple.o Modules/_testcapi/getargs.o Modules/_testcapi/pytime.o Modules/_testcapi/datetime.o Modules/_testcapi/docstring.o Modules/_testcapi/mem.o Modules/_testcapi/watchers.o Modules/_testcapi/long.o Modules/_testcapi/float.o Modules/_testcapi/complex.o Modules/_testcapi/numbers.o Modules/_testcapi/structmember.o Modules/_testcapi/exceptions.o Modules/_testcapi/code.o Modules/_testcapi/buffer.o Modules/_testcapi/pyos.o Modules/_testcapi/file.o Modules/_testcapi/codec.o Modules/_testcapi/immortal.o Modules/_testcapi/heaptype_relative.o Modules/_testcapi/gc.o Modules/_testcapi/sys.o $(MODULE__TESTCAPI_LDFLAGS)  -o Modules/_testcapi$(EXT_SUFFIX)
 Modules/_testclinic.o: $(srcdir)/Modules/_testclinic.c $(MODULE__TESTCLINIC_DEPS) $(MODULE_DEPS_SHARED) $(PYTHON_HEADERS); $(CC) $(MODULE__TESTCLINIC_CFLAGS) $(PY_STDMODULE_CFLAGS) $(CCSHARED) -c $(srcdir)/Modules/_testclinic.c -o Modules/_testclinic.o
 Modules/_testclinic$(EXT_SUFFIX):  Modules/_testclinic.o; $(BLDSHARED)  Modules/_testclinic.o $(MODULE__TESTCLINIC_LDFLAGS)  -o Modules/_testclinic$(EXT_SUFFIX)
 Modules/_testimportmultiple.o: $(srcdir)/Modules/_testimportmultiple.c $(MODULE__TESTIMPORTMULTIPLE_DEPS) $(MODULE_DEPS_SHARED) $(PYTHON_HEADERS); $(CC) $(MODULE__TESTIMPORTMULTIPLE_CFLAGS) $(PY_STDMODULE_CFLAGS) $(CCSHARED) -c $(srcdir)/Modules/_testimportmultiple.c -o Modules/_testimportmultiple.o

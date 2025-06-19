@@ -10,8 +10,7 @@
 """
 #    This module is maintained by Marc-Andre Lemburg <mal@egenix.com>.
 #    If you find problems, please submit bug reports/patches via the
-#    Python issue tracker (https://github.com/python/cpython/issues) and
-#    mention "@malemburg".
+#    Python bug tracker (http://bugs.python.org) and assign them to "lemburg".
 #
 #    Still needed:
 #    * support for MS-DOS (PythonDX ?)
@@ -348,8 +347,7 @@ _WIN32_CLIENT_RELEASES = [
 ]
 
 _WIN32_SERVER_RELEASES = [
-    ((10, 1, 0), "post2025Server"),
-    ((10, 0, 26100), "2025Server"),
+    ((10, 1, 0), "post2022Server"),
     ((10, 0, 20348), "2022Server"),
     ((10, 0, 17763), "2019Server"),
     ((6, 4, 0), "2016Server"),
@@ -1074,7 +1072,7 @@ def _sys_version(sys_version=None):
         return result
 
     sys_version_parser = re.compile(
-        r'([\w.+]+)\s*(?:\ \|\ packaged\ by\ Anaconda,\ Inc\.\ \|)?\s*'
+    r'([\w.+]+)\s*(?:\ \|\ packaged\ by\ conda\-forge\ \|)?\s*'
         r'\(#?([^,]+)'  # "(#buildno"
         r'(?:,\s*([\w ]*)'  # ", builddate"
         r'(?:,\s*([\w :]*))?)?\)\s*'  # ", buildtime)<space>"

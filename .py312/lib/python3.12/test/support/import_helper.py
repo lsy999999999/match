@@ -58,8 +58,8 @@ def make_legacy_pyc(source):
     :return: The file system path to the legacy pyc file.
     """
     pyc_file = importlib.util.cache_from_source(source)
-    assert source.endswith('.py')
-    legacy_pyc = source + 'c'
+    up_one = os.path.dirname(os.path.abspath(source))
+    legacy_pyc = os.path.join(up_one, source + 'c')
     shutil.move(pyc_file, legacy_pyc)
     return legacy_pyc
 
@@ -266,18 +266,6 @@ def modules_cleanup(oldmodules):
     # do currently). Implicitly imported *real* modules should be left alone
     # (see issue 10556).
     sys.modules.update(oldmodules)
-
-
-@contextlib.contextmanager
-def isolated_modules():
-    """
-    Save modules on entry and cleanup on exit.
-    """
-    (saved,) = modules_setup()
-    try:
-        yield
-    finally:
-        modules_cleanup(saved)
 
 
 def mock_register_at_fork(func):
