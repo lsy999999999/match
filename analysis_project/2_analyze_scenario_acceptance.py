@@ -54,8 +54,8 @@ def analyze_and_plot():
     # 3. 创建DataFrame并绘图
     plot_df = pd.DataFrame({
         '接受率 (%)': single_en + taken_en + single_zh + taken_zh,
-        '场景': ['向单身求偶'] * len(single_en) + ['向非单身求偶'] * len(taken_en) + \
-               ['向单身求偶'] * len(single_zh) + ['向非单身求偶'] * len(taken_zh),
+        '场景': ['Seeking a mate from a single person'] * len(single_en) + ['Seeking a mate from a non-single person'] * len(taken_en) + \
+               ['Seeking a mate from a single person'] * len(single_zh) + ['Seeking a mate from a non-single person'] * len(taken_zh),
         'Prompt 语言': [f'English (N={config["num_groups_en"]})'] * (len(single_en) + len(taken_en)) + \
                       [f'Chinese (N={config["num_groups_zh"]})'] * (len(single_zh) + len(taken_zh))
     })
@@ -65,7 +65,7 @@ def analyze_and_plot():
     plt.title('Distribution of courtship acceptance rate in different scenarios under Chinese and English prompts', fontsize=config["title_fontsize"])
     plt.ylabel('Acceptance rate (%)', fontsize=config["label_fontsize"])
     plt.xlabel('Courtship scenario', fontsize=config["label_fontsize"])
-    plt.legend(title='Prompt 语言及样本数')
+    plt.legend(title='Prompt language and sample number')
     plt.tight_layout()
 
     # (可选) 添加统计检验标注

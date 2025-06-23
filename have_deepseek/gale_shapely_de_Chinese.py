@@ -145,8 +145,14 @@ def log_text(logfile, logtext):
 
 
 if __name__=='__main__':
-  for i in range(9,51):
-    # for _ in range(5):
-    l1,l2 = read_file(r'/home/lsy/match/dataset/save_merge_select_null_3.xlsx', i)
+  for i in range(12, 21):
+    print(f"\n======================\n--- 开始处理第 {i} 组 ---\n======================")
+    l1, l2 = read_file(r'/home/lsy/match/dataset/save_merge_select_null_3.xlsx', i)
     dict1, dict2 = read_file_attr(r'/home/lsy/match/dataset/save_merge_select_null_3.xlsx', i)
+    
+    # 【新增】数据校验
+    if not l1 or not l2 or not dict1 or not dict2:
+        print(f"警告: 第 {i} 组数据加载不完整或为空，跳过该组。")
+        continue # 直接进入下一轮循环
+
     gale_shapley(l1, l2, dict1, dict2, i)

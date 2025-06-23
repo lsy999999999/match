@@ -103,30 +103,47 @@ def ask_gpt_api_call(prompt):
     # 模拟调用 GPT API 的逻辑
     api_key = "sk-DG9ZYLfnjSbUPt3TE6OTpN3Ge9Mr9hLAgg4UBWxCba3ryvYT"
     client = OpenAI(api_key=api_key, base_url="https://aigcbest.top/v1")
-    model = "deepseek-ai/DeepSeek-R1-0528"
-    response = client.chat.completions.create(
-        model=model,
-        messages=[
-            {"role": "system", "content":prompt},
-            
-        ]
-    )
-    
-    result = response.choices[0].message.content
-    # print(prompt, result)
+    model = "deepseek-ai/DeepSeek-R1"
 
+    #deepseek-ai/DeepSeek-R1
     log = []
-    log.append(prompt)
-    log.append(result)
+    log.append(prompt) # 先记录下prompt，万一出错就知道是哪个prompt
 
-    if '是' in result:
-        flag = True
-    elif '否' in result:
-        flag = False
-    else:
-        flag = -1
+    try:
+        print("    [API] 正在调用模型...")
+        response = client.chat.completions.create(
+            model=model,
+            messages=[
+                # 【修改】使用更标准的 user 角色
+                {"role": "user", "content": prompt}
+            ],
+            timeout=60.0,  # 【新增】设置60秒的超时，防止无限期等待
+        )
+        
+        result = response.choices[0].message.content
+        print(f"    [API] 成功获取响应: {result[:30]}...") # 打印响应前30个字符
+        log.append(result)
 
-    return flag, log
+        if '是' in result:
+            flag = True
+        elif '否' in result:
+            flag = False
+        else:
+            # 【新增】如果模型没有明确回答“是”或“否”，视为一个特殊情况
+            print(f"    [API 警告] 模型响应不明确: {result}")
+            flag = -1 # 标记为无效响应
+
+        return flag, log
+
+    except Exception as e:
+        print(f"!!!!!! API 调用失败 !!!!!!")
+        print(f"错误类型: {type(e).__name__}")
+        print(f"错误信息: {e}")
+        print(f"导致错误的Prompt: {prompt}")
+        # 【重要】如果API调用失败，我们不能让程序崩溃。
+        # 返回一个明确的失败信号，让主程序决定如何处理。
+        log.append(f"API_ERROR: {e}")
+        return -1, log # -1 代表失败或未知
 
 
 

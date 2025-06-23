@@ -146,3 +146,11 @@
 +conda-forge/noarch::seaborn-0.13.2-hd8ed1ab_3
 +conda-forge/noarch::seaborn-base-0.13.2-pyhd8ed1ab_3
 # update specs: ['seaborn']
+==> 2025-06-22 18:51:17 <==
+# cmd: /home/lsy/anaconda3/bin/conda install nltk
+# conda version: 25.5.1
++conda-forge/linux-64::regex-2024.11.6-py312h66e93f0_0
++conda-forge/noarch::click-8.2.1-pyh707e725_0
++conda-forge/noarch::joblib-1.5.1-pyhd8ed1ab_0
++conda-forge/noarch::nltk-3.9.1-pyhd8ed1ab_1
+# update specs: ['nltk']
