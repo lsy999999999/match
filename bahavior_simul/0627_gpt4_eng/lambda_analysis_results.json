@@ -1,0 +1,11 @@
+{
+  "threshold_S": 8.4,
+  "threshold_S2": 7.2,
+  "threshold_used_for_fitting": 7.2,
+  "lambda_mle": 1.4121173487748244,
+  "lambda_mse": 3.3155188337461188,
+  "lambda_curvefit": 3.3144850765997793,
+  "total_decisions": 1168,
+  "single_decisions": 327,
+  "switch_decisions": 841
+}

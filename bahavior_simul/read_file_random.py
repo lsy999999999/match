@@ -17,8 +17,10 @@ def read_file(path, group=1):
 
 def read_file_attr(path, group=1):
     df = pd.read_excel(path)
-    attributes = df[['group', 'iid', 'gender', 'pid', 'age', 'age_o', 'career', 'gpt_score', 'attractive_info', 'sincere_info',
-                     'intelligence_info', 'funny_info', 'ambition_info', 'shared_interests_info',
+    # Modified to include numeric partner scores instead of text satisfaction levels
+    attributes = df[['group', 'iid', 'gender', 'pid', 'age', 'age_o', 'career', 'gpt_score', 
+                     'attractive_partner', 'sincere_partner', 'intelligence_partner', 
+                     'funny_partner', 'ambition_partner', 'shared_interests_partner',
                      'attractive_important', 'sincere_important', 'intelligence_important',
                      'funny_important', 'ambition_important', 'shared_interests_important']]
 

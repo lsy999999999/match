@@ -154,3 +154,9 @@
 +conda-forge/noarch::joblib-1.5.1-pyhd8ed1ab_0
 +conda-forge/noarch::nltk-3.9.1-pyhd8ed1ab_1
 # update specs: ['nltk']
+==> 2025-06-28 15:54:50 <==
+# cmd: /home/lsy/anaconda3/bin/conda install scikit-learn
+# conda version: 25.5.1
++conda-forge/linux-64::scikit-learn-1.7.0-py312h7a48858_1
++conda-forge/noarch::threadpoolctl-3.6.0-pyhecae5ae_0
+# update specs: ['scikit-learn']
