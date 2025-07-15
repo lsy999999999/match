@@ -1,0 +1,20 @@
+{
+  "exponential_model": {
+    "total_expected_blocking_pairs": 16110.0,
+    "total_matched_pairs": 585,
+    "average_blocking_pairs_per_group": 767.1428571428571,
+    "stability_score": -26.53846153846154,
+    "model": "exponential"
+  },
+  "sigmoid_model": {
+    "total_expected_blocking_pairs": 4040.523874026613,
+    "total_matched_pairs": 585,
+    "average_blocking_pairs_per_group": 192.40589876317205,
+    "stability_score": -5.9068784171395095,
+    "model": "sigmoid"
+  },
+  "parameters": {
+    "lambda_exponential": 0.5,
+    "lambda_sigmoid": 0.01
+  }
+}

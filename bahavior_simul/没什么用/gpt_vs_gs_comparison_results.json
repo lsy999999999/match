@@ -1,0 +1,412 @@
+{
+  "exponential_model": {
+    "overall_stats": {
+      "total_gpt_expected_bp": 8783.0,
+      "total_gs_expected_bp": 8586.0,
+      "average_gpt_bp": 418.23809523809524,
+      "average_gs_bp": 408.85714285714283,
+      "total_bp_reduction": 197.0,
+      "reduction_percentage": 2.2429693726517135,
+      "gpt_stability_score": -20.84825870646766,
+      "gs_stability_score": -20.35820895522388
+    },
+    "group_results": {
+      "1": {
+        "group": 1,
+        "gpt_expected_bp": 315.0,
+        "gs_expected_bp": 306.0,
+        "gpt_matched_pairs": 18,
+        "gs_matched_pairs": 18,
+        "bp_difference": 9.0,
+        "improvement_ratio": 0.02857142857142857
+      },
+      "2": {
+        "group": 2,
+        "gpt_expected_bp": 769.0,
+        "gs_expected_bp": 756.0,
+        "gpt_matched_pairs": 28,
+        "gs_matched_pairs": 28,
+        "bp_difference": 13.0,
+        "improvement_ratio": 0.016905071521456438
+      },
+      "3": {
+        "group": 3,
+        "gpt_expected_bp": 248.0,
+        "gs_expected_bp": 240.0,
+        "gpt_matched_pairs": 16,
+        "gs_matched_pairs": 16,
+        "bp_difference": 8.0,
+        "improvement_ratio": 0.03225806451612903
+      },
+      "4": {
+        "group": 4,
+        "gpt_expected_bp": 770.0,
+        "gs_expected_bp": 756.0,
+        "gpt_matched_pairs": 28,
+        "gs_matched_pairs": 28,
+        "bp_difference": 14.0,
+        "improvement_ratio": 0.01818181818181818
+      },
+      "5": {
+        "group": 5,
+        "gpt_expected_bp": 94.0,
+        "gs_expected_bp": 90.0,
+        "gpt_matched_pairs": 10,
+        "gs_matched_pairs": 10,
+        "bp_difference": 4.0,
+        "improvement_ratio": 0.0425531914893617
+      },
+      "6": {
+        "group": 6,
+        "gpt_expected_bp": 32.0,
+        "gs_expected_bp": 30.0,
+        "gpt_matched_pairs": 6,
+        "gs_matched_pairs": 6,
+        "bp_difference": 2.0,
+        "improvement_ratio": 0.0625
+      },
+      "7": {
+        "group": 7,
+        "gpt_expected_bp": 662.0,
+        "gs_expected_bp": 650.0,
+        "gpt_matched_pairs": 26,
+        "gs_matched_pairs": 26,
+        "bp_difference": 12.0,
+        "improvement_ratio": 0.01812688821752266
+      },
+      "8": {
+        "group": 8,
+        "gpt_expected_bp": 190.0,
+        "gs_expected_bp": 182.0,
+        "gpt_matched_pairs": 14,
+        "gs_matched_pairs": 14,
+        "bp_difference": 8.0,
+        "improvement_ratio": 0.042105263157894736
+      },
+      "9": {
+        "group": 9,
+        "gpt_expected_bp": 1008.0,
+        "gs_expected_bp": 992.0,
+        "gpt_matched_pairs": 32,
+        "gs_matched_pairs": 32,
+        "bp_difference": 16.0,
+        "improvement_ratio": 0.015873015873015872
+      },
+      "10": {
+        "group": 10,
+        "gpt_expected_bp": 248.0,
+        "gs_expected_bp": 240.0,
+        "gpt_matched_pairs": 16,
+        "gs_matched_pairs": 16,
+        "bp_difference": 8.0,
+        "improvement_ratio": 0.03225806451612903
+      },
+      "11": {
+        "group": 11,
+        "gpt_expected_bp": 1009.0,
+        "gs_expected_bp": 992.0,
+        "gpt_matched_pairs": 32,
+        "gs_matched_pairs": 32,
+        "bp_difference": 17.0,
+        "improvement_ratio": 0.01684836471754212
+      },
+      "12": {
+        "group": 12,
+        "gpt_expected_bp": 563.0,
+        "gs_expected_bp": 552.0,
+        "gpt_matched_pairs": 24,
+        "gs_matched_pairs": 24,
+        "bp_difference": 11.0,
+        "improvement_ratio": 0.019538188277087035
+      },
+      "13": {
+        "group": 13,
+        "gpt_expected_bp": 190.0,
+        "gs_expected_bp": 182.0,
+        "gpt_matched_pairs": 14,
+        "gs_matched_pairs": 14,
+        "bp_difference": 8.0,
+        "improvement_ratio": 0.042105263157894736
+      },
+      "14": {
+        "group": 14,
+        "gpt_expected_bp": 190.0,
+        "gs_expected_bp": 182.0,
+        "gpt_matched_pairs": 14,
+        "gs_matched_pairs": 14,
+        "bp_difference": 8.0,
+        "improvement_ratio": 0.042105263157894736
+      },
+      "15": {
+        "group": 15,
+        "gpt_expected_bp": 664.0,
+        "gs_expected_bp": 650.0,
+        "gpt_matched_pairs": 26,
+        "gs_matched_pairs": 26,
+        "bp_difference": 14.0,
+        "improvement_ratio": 0.02108433734939759
+      },
+      "16": {
+        "group": 16,
+        "gpt_expected_bp": 95.0,
+        "gs_expected_bp": 90.0,
+        "gpt_matched_pairs": 10,
+        "gs_matched_pairs": 10,
+        "bp_difference": 5.0,
+        "improvement_ratio": 0.05263157894736842
+      },
+      "17": {
+        "group": 17,
+        "gpt_expected_bp": 314.0,
+        "gs_expected_bp": 306.0,
+        "gpt_matched_pairs": 18,
+        "gs_matched_pairs": 18,
+        "bp_difference": 8.0,
+        "improvement_ratio": 0.025477707006369428
+      },
+      "18": {
+        "group": 18,
+        "gpt_expected_bp": 59.0,
+        "gs_expected_bp": 56.0,
+        "gpt_matched_pairs": 8,
+        "gs_matched_pairs": 8,
+        "bp_difference": 3.0,
+        "improvement_ratio": 0.05084745762711865
+      },
+      "19": {
+        "group": 19,
+        "gpt_expected_bp": 661.0,
+        "gs_expected_bp": 650.0,
+        "gpt_matched_pairs": 26,
+        "gs_matched_pairs": 26,
+        "bp_difference": 11.0,
+        "improvement_ratio": 0.01664145234493192
+      },
+      "20": {
+        "group": 20,
+        "gpt_expected_bp": 138.0,
+        "gs_expected_bp": 132.0,
+        "gpt_matched_pairs": 12,
+        "gs_matched_pairs": 12,
+        "bp_difference": 6.0,
+        "improvement_ratio": 0.043478260869565216
+      },
+      "21": {
+        "group": 21,
+        "gpt_expected_bp": 564.0,
+        "gs_expected_bp": 552.0,
+        "gpt_matched_pairs": 24,
+        "gs_matched_pairs": 24,
+        "bp_difference": 12.0,
+        "improvement_ratio": 0.02127659574468085
+      }
+    }
+  },
+  "sigmoid_model": {
+    "overall_stats": {
+      "total_gpt_expected_bp": 2196.67010207003,
+      "total_gs_expected_bp": 2153.917419321237,
+      "average_gpt_bp": 104.60333819381097,
+      "average_gs_bp": 102.56749615815414,
+      "total_bp_reduction": 42.75268274879318,
+      "reduction_percentage": 1.946249585156425,
+      "gpt_stability_score": -4.4643534877363935,
+      "gs_stability_score": -4.358003530649843
+    },
+    "group_results": {
+      "1": {
+        "group": 1,
+        "gpt_expected_bp": 78.76689395098575,
+        "gs_expected_bp": 76.6467524558767,
+        "gpt_matched_pairs": 18,
+        "gs_matched_pairs": 18,
+        "bp_difference": 2.1201414951090527,
+        "improvement_ratio": 0.026916657351353127
+      },
+      "2": {
+        "group": 2,
+        "gpt_expected_bp": 192.30970515430056,
+        "gs_expected_bp": 189.50540112028625,
+        "gpt_matched_pairs": 28,
+        "gs_matched_pairs": 28,
+        "bp_difference": 2.804304034014308,
+        "improvement_ratio": 0.014582228347572276
+      },
+      "3": {
+        "group": 3,
+        "gpt_expected_bp": 62.02611468113333,
+        "gs_expected_bp": 60.1887748385053,
+        "gpt_matched_pairs": 16,
+        "gs_matched_pairs": 16,
+        "bp_difference": 1.837339842628026,
+        "improvement_ratio": 0.029622036654617274
+      },
+      "4": {
+        "group": 4,
+        "gpt_expected_bp": 192.55451987863134,
+        "gs_expected_bp": 189.9141739350715,
+        "gpt_matched_pairs": 28,
+        "gs_matched_pairs": 28,
+        "bp_difference": 2.6403459435598506,
+        "improvement_ratio": 0.013712199252575748
+      },
+      "5": {
+        "group": 5,
+        "gpt_expected_bp": 23.51961063911398,
+        "gs_expected_bp": 22.554688086097357,
+        "gpt_matched_pairs": 10,
+        "gs_matched_pairs": 10,
+        "bp_difference": 0.9649225530166241,
+        "improvement_ratio": 0.04102629791889166
+      },
+      "6": {
+        "group": 6,
+        "gpt_expected_bp": 8.00719154966145,
+        "gs_expected_bp": 7.535957748307252,
+        "gpt_matched_pairs": 6,
+        "gs_matched_pairs": 6,
+        "bp_difference": 0.471233801354197,
+        "improvement_ratio": 0.05885132114444311
+      },
+      "7": {
+        "group": 7,
+        "gpt_expected_bp": 165.55339625913854,
+        "gs_expected_bp": 162.88826730608426,
+        "gpt_matched_pairs": 26,
+        "gs_matched_pairs": 26,
+        "bp_difference": 2.6651289530542783,
+        "improvement_ratio": 0.01609830431314491
+      },
+      "8": {
+        "group": 8,
+        "gpt_expected_bp": 47.52499942460467,
+        "gs_expected_bp": 45.600571066636626,
+        "gpt_matched_pairs": 14,
+        "gs_matched_pairs": 14,
+        "bp_difference": 1.924428357968047,
+        "improvement_ratio": 0.04049296962162046
+      },
+      "9": {
+        "group": 9,
+        "gpt_expected_bp": 252.0761481895442,
+        "gs_expected_bp": 249.0844584361591,
+        "gpt_matched_pairs": 32,
+        "gs_matched_pairs": 32,
+        "bp_difference": 2.9916897533850886,
+        "improvement_ratio": 0.01186819845856872
+      },
+      "10": {
+        "group": 10,
+        "gpt_expected_bp": 62.04094336503008,
+        "gs_expected_bp": 60.20907264448194,
+        "gpt_matched_pairs": 16,
+        "gs_matched_pairs": 16,
+        "bp_difference": 1.8318707205481388,
+        "improvement_ratio": 0.02952680312692809
+      },
+      "11": {
+        "group": 11,
+        "gpt_expected_bp": 252.32654905262208,
+        "gs_expected_bp": 249.02819484290745,
+        "gpt_matched_pairs": 32,
+        "gs_matched_pairs": 32,
+        "bp_difference": 3.2983542097146312,
+        "improvement_ratio": 0.013071768397334866
+      },
+      "12": {
+        "group": 12,
+        "gpt_expected_bp": 140.81328620951695,
+        "gs_expected_bp": 138.4916695865245,
+        "gpt_matched_pairs": 24,
+        "gs_matched_pairs": 24,
+        "bp_difference": 2.321616622992451,
+        "improvement_ratio": 0.01648719865494868
+      },
+      "13": {
+        "group": 13,
+        "gpt_expected_bp": 47.51474923942128,
+        "gs_expected_bp": 45.547045774891096,
+        "gpt_matched_pairs": 14,
+        "gs_matched_pairs": 14,
+        "bp_difference": 1.9677034645301816,
+        "improvement_ratio": 0.04141247709453655
+      },
+      "14": {
+        "group": 14,
+        "gpt_expected_bp": 47.52426203392074,
+        "gs_expected_bp": 45.664818303118096,
+        "gpt_matched_pairs": 14,
+        "gs_matched_pairs": 14,
+        "bp_difference": 1.8594437308026457,
+        "improvement_ratio": 0.0391261989397217
+      },
+      "15": {
+        "group": 15,
+        "gpt_expected_bp": 166.10795032143625,
+        "gs_expected_bp": 163.18027182594744,
+        "gpt_matched_pairs": 26,
+        "gs_matched_pairs": 26,
+        "bp_difference": 2.9276784954888058,
+        "improvement_ratio": 0.017625155748556536
+      },
+      "16": {
+        "group": 16,
+        "gpt_expected_bp": 23.75943698815828,
+        "gs_expected_bp": 22.50943698815828,
+        "gpt_matched_pairs": 10,
+        "gs_matched_pairs": 10,
+        "bp_difference": 1.25,
+        "improvement_ratio": 0.052610674260631714
+      },
+      "17": {
+        "group": 17,
+        "gpt_expected_bp": 78.5384325835052,
+        "gs_expected_bp": 76.71768463295854,
+        "gpt_matched_pairs": 18,
+        "gs_matched_pairs": 18,
+        "bp_difference": 1.8207479505466608,
+        "improvement_ratio": 0.02318289136482026
+      },
+      "18": {
+        "group": 18,
+        "gpt_expected_bp": 14.764586765306218,
+        "gs_expected_bp": 14.0333748472361,
+        "gpt_matched_pairs": 8,
+        "gs_matched_pairs": 8,
+        "bp_difference": 0.7312119180701178,
+        "improvement_ratio": 0.04952471272601529
+      },
+      "19": {
+        "group": 19,
+        "gpt_expected_bp": 165.33176128792073,
+        "gs_expected_bp": 162.935140907289,
+        "gpt_matched_pairs": 26,
+        "gs_matched_pairs": 26,
+        "bp_difference": 2.396620380631731,
+        "improvement_ratio": 0.014495825617305814
+      },
+      "20": {
+        "group": 20,
+        "gpt_expected_bp": 34.54133374730453,
+        "gs_expected_bp": 33.18285124216179,
+        "gpt_matched_pairs": 12,
+        "gs_matched_pairs": 12,
+        "bp_difference": 1.3584825051427387,
+        "improvement_ratio": 0.039329185001397045
+      },
+      "21": {
+        "group": 21,
+        "gpt_expected_bp": 141.06823074877417,
+        "gs_expected_bp": 138.49881273253814,
+        "gpt_matched_pairs": 24,
+        "gs_matched_pairs": 24,
+        "bp_difference": 2.5694180162360283,
+        "improvement_ratio": 0.018214008941615338
+      }
+    }
+  },
+  "parameters": {
+    "lambda_exponential": 0.5,
+    "lambda_sigmoid": 0.01
+  }
+}

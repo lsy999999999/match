@@ -1,0 +1,37 @@
+{
+  "S_estimates": [
+    7.0,
+    8.0,
+    8.0,
+    7.0,
+    7.5,
+    6.0
+  ],
+  "lambda_vector": [
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1,
+    0.1
+  ],
+  "dimension_names": [
+    "attractive",
+    "sincere",
+    "intelligence",
+    "funny",
+    "ambition",
+    "shared_interests"
+  ],
+  "accuracy": 0.18493150684931506,
+  "positive_diff_percentages": [
+    58.13356164383562,
+    61.72945205479452,
+    60.70205479452054,
+    65.23972602739725,
+    60.70205479452054,
+    60.78767123287672
+  ],
+  "model_type": "exponential_no_absolute_value",
+  "total_decisions": 1168
+}

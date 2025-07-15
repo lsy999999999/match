@@ -1,136 +1,330 @@
-import json
-import numpy as np
 from openai import OpenAI
 import json
-import re
+import time
+import numpy as np
 
+# Initialize OpenAI client
+api_key = "sk-Okj8t46lHgUnyho650276b8cEc51419197A70939681a8491"
+client = OpenAI(api_key=api_key, base_url="https://aigcbest.top/v1")
+model = "gpt-4-turbo"
 
-# 保存对话历史到本地文件
-def save_conversation_history(conversation_history, filename):
-    with open(filename, 'w') as file:
-        json.dump(conversation_history, file)
+def ask_gpt_single_man_propose(score_details):
+    """
+    Ask GPT if a single man should accept a proposal based on detailed numeric scores.
+    
+    Args:
+        score_details (dict): Dictionary containing all scores and importance weights
+    
+    Returns:
+        tuple: (decision (bool), log_entry (list))
+    """
+    # Get age and career from the score_details
+    age = int(score_details.get('age', 23))
+    age_o = int(score_details.get('age_o', 23))
+    career = score_details.get('career', 'lawyer/policy work')
+    
+    prompt = f"""假设你是一位 {age} 岁的单身男士，有一位 {age_o} 岁的女性正在追求你。你的职业类型是 {career}。你从六个维度对她进行了评估，满分为 10 分。这六个维度分别是：吸引力：{score_details['attractive']}/10，真诚：{score_details['sincere']}/10，智力：{score_details['intelligence']}/10，幽默感：{score_details['funny']}/10，抱负：{score_details['ambition']}/10，共同兴趣：{score_details['shared_interests']}/10。这些属性的重要性权重如下：吸引力：{score_details['attractive_importance']}，真诚：{score_details['sincere_importance']}，智力：{score_details['intelligence_importance']}，幽默感：{score_details['funny_importance']}，抱负：{score_details['ambition_importance']}，共同兴趣：{score_details['shared_interests_importance']}。你愿意和这位女士约会吗？请告诉我原因。你的答案必须是（是）或（否），然后说明你的原因。你必须遵守这条规则！你不能说其他话。"""
 
-
-# 从本地文件加载对话历史
-def load_conversation_history(filename):
     try:
-        with open(filename, 'r') as file:
-            conversation_history = json.load(file)
-        return conversation_history
-    except FileNotFoundError:
-        return []
-# 处理单身男生提议的场景
-def ask_gpt_single_man_propose(man_score):
-    words = [np.array(man_score[:3]), np.array(man_score[4:10])]
-    words = [item for sublist in words for item in sublist]
-    assert len(words) == 9
-    prompt = (
-        r'假设你是一位{}岁的单身女性，而一位{}岁的男士正在追求你。'
-        r'你的职业类型是{}。你从六个维度对他进行了评估。这六个维度分别是：吸引力：{}，真诚度：{}, '
-        r'智力：{}，幽默感：{}，抱负：{}，共同兴趣：{}，你愿意和这位男士约会吗？ '
-        r'请告诉我原因。你的答案必须是（是）或（否），然后加上你的理由。你必须遵守这条规则！ '
-        r'你不能说其他话。'.format(*words)
-    )
-    
-    return ask_gpt_api_call(prompt)
-
-# 处理单身女生提议的场景
-def ask_gpt_single_woman_propose(woman_score):
-    words = [np.array(woman_score[:3]), np.array(woman_score[4:10])]
-    words = [item for sublist in words for item in sublist]
-    assert len(words) == 9
-    prompt = (
-        r'假设你是一位 {} 岁的单身男士，有一位 {} 岁的女性正在追求你。 '
-        r'你的职业类型是 {}。你从六个维度评估了她。这六个维度分别是：吸引力：{}，真诚度：{},'
-        r'智力：{}，幽默感：{}，抱负：{}，共同兴趣：{}，你愿意和这位女士约会吗？ '
-        r'请告诉我原因。你的答案必须是（是）或（否），然后加上你的理由。你必须遵守这条规则！ '
-        r'你不能说其他话。'.format(*words)
-    )
-    
-    return ask_gpt_api_call(prompt)
-
-# 处理有伴男生提议的场景
-def ask_gpt_non_single_man_propose(man_score, current_man_score):
-    words = [np.array(current_man_score[:3]), np.array(current_man_score[4:10])]
-    words = [item for sublist in words for item in sublist]
-    words.append(man_score[1])  # new man's age
-    for i in range(4, 10):
-        words.append(man_score[i])
-    
-    assert len(words) == 16
-    prompt = (
-        r'假设你是一位 {} 岁的女性，最近和你 {} 岁的男朋友交往。 '
-        r'你的职业类型是 {}。你对男朋友在六个维度上的评分如下：吸引力：{}，真诚：{}, '
-        r'智力：{}，幽默感：{}，抱负：{}，共同兴趣：{}。现在，另一位 {} 岁的男人正在追求你。 '
-        r'你和他约会过，你也根据同样不同的重要性，在六个维度上给他打了分： '
-        r'吸引力：{}，真诚：{}，智力：{}，幽默感：{}，抱负：{}，共同兴趣：{}。如果你认为'
-        r'追求你的人在那些你认为比现任男朋友更重要的维度上更优秀，你可以考虑 '
-        r'结束目前的恋情，去探索新的恋情。你愿意结束现在的感情，和追求你的男人开始一段新恋情吗？'
-        r'还有，告诉我原因。你的答案必须是（是）或（否），然后说明你的理由。你必须遵守这条规则!'
-        r'你不能说其他话！'.format(*words)
-    )
-    
-    return ask_gpt_api_call(prompt)
-
-# 处理有伴女生提议的场景
-def ask_gpt_non_single_woman_propose(woman_score, current_woman_score):
-    words = [np.array(current_woman_score[:3]), np.array(current_woman_score[4:10])]
-    words = [item for sublist in words for item in sublist]
-    words.append(woman_score[1])  # new woman's age
-    for i in range(4, 10):
-        words.append(woman_score[i])
-    
-    assert len(words) == 16
-    prompt = (
-        r'假设你是一位 {} 岁的男性，最近和你 {} 岁的女朋友交往。'
-        r'你的职业类型是 {}。你对女朋友在六个维度上的评分如下：吸引力：{}，真诚：{}， '
-        r'智力：{}，幽默感：{}，抱负：{}，共同兴趣：{}。现在，另一位 {} 岁的女性正在追求你。 '
-        r'你和她约会过，并且你也根据同样不同的重要性，在六个维度上对她进行了评分：'
-        r'吸引力：{}，真诚：{}，智力：{}，幽默感：{}，抱负：{}，共同兴趣：{}。如果你认为 '
-        r'追求你的人在那些你认为比现任女友更重要的维度上更优秀，你可能会考虑 '
-        r'结束目前的恋爱关系，去探索新的恋情。你愿意结束现在的关系，和追求你的女人开始一段新恋情吗？ '
-        r'还有，告诉我原因。你的答案必须是（是）或（否），然后说明你的理由。你必须遵守这条规则! '
-        r'你不能说其他话! '.format(*words)
-    )
-    
-    return ask_gpt_api_call(prompt)
-
-
-# 统一的API调用函数，负责调用 GPT 接口
-def ask_gpt_api_call(prompt):
-    history_filename = 'conversation_history.json'
-    
-    # 模拟调用 GPT API 的逻辑
-    api_key = "sk-Okj8t46lHgUnyho650276b8cEc51419197A70939681a8491"
-    client = OpenAI(api_key=api_key, base_url="https://aigcbest.top/v1")
-    model = "gpt-4-turbo"
-    response = client.chat.completions.create(
-        model=model,
-        messages=[
-            {"role": "system", "content": "你是一位恋爱顾问，请用中文回答，并且只回答 是 或 否 加理由。"},
-            {"role": "user",   "content": prompt}
+        response = client.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": "您是约会顾问。请回答“是”或“否”，并附上原因。"},
+                {"role": "user", "content": prompt}
+            ]
+        )
+        
+        answer = response.choices[0].message.content.strip()
+        
+        # Extract decision
+        if '是' in answer:
+            decision = True
+        elif '否' in answer:
+            decision = False
+        else:
+            # Fallback if neither YES nor NO is found
+            decision = score_details['overall_score'] >= 6
+        
+        # Clean up for CSV (replace commas with semicolons)
+        clean_prompt = prompt.replace(",", ";").replace("\n", " ").strip()
+        clean_answer = answer.replace(",", ";").replace("\n", " ").strip()
+        
+        # Create log entry with full prompt and response
+        log_entry = [
+            clean_prompt,  # Full prompt with numeric scores
+            clean_answer   # Full response
         ]
-    )
+        
+        return decision, log_entry
+        
+    except Exception as e:
+        print(f"Error calling GPT: {e}")
+        # Default behavior
+        decision = score_details['overall_score'] >= 6
+        
+        # Clean prompt for CSV
+        clean_prompt = prompt.replace(",", ";").replace("\n", " ").strip()
+        
+        # Create default response
+        if decision:
+            default_answer = f"是，{score_details['overall_score']} 的总体兼容性得分达到可接受的阈值。"
+        else:
+            default_answer = f"否，{score_details['overall_score']} 的总体兼容性得分低于可接受的阈值。"
+        
+        log_entry = [
+            clean_prompt,
+            f"API_ERROR: {default_answer}"
+        ]
+        
+        return decision, log_entry
+
+
+def ask_gpt_single_woman_propose(score_details):
+    """
+    Ask GPT if a single woman should accept a proposal based on detailed numeric scores.
     
-    result = response.choices[0].message.content
-    # print(prompt, result)
+    Args:
+        score_details (dict): Dictionary containing detailed scores and importance weights
+    
+    Returns:
+        tuple: (decision (bool), log_entry (list))
+    """
+    # Get age and career from the score_details
+    age = int(score_details.get('age', 23))
+    age_o = int(score_details.get('age_o', 23))
+    career = score_details.get('career', 'lawyer/policy work')
+    
+    prompt = f"""假设您是一位 {age} 岁的单身男士，有一位 {age_o} 岁的女性正在追求您。您的职业类型是 {career}。您对她进行了六个维度的评估，满分为 10 分。这六个维度分别是：吸引力：{score_details['attractive']}/10，真诚：{score_details['sincere']}/10，智力：{score_details['intelligence']}/10，幽默感：{score_details['funny']}/10，抱负：{score_details['ambition']}/10，共同兴趣：{score_details['shared_interests']}/10。您对这些属性的重要性权重为：吸引力：{score_details['attractive_importance']}，真诚： {score_details['sincere_importance']}，智力：{score_details['intelligence_importance']}，幽默感：{score_details['funny_importance']}，野心：{score_details['ambition_importance']}，共同兴趣：{score_details['shared_interests_importance']}。你愿意和这位女士约会吗？请告诉我原因。你的答案必须是(是）或（否），然后说明你的理由。你必须遵守这条规则！你不能说其他话。"""
 
-    log = []
-    log.append(prompt)
-    log.append(result)
+    try:
+        response = client.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": "您是约会顾问。请回答“是”或“否”，并附上原因。"},
+                {"role": "user", "content": prompt}
+            ]
+        )
+        
+        answer = response.choices[0].message.content.strip()
+        
+        # Extract decision
+        if '是' in answer.upper():
+            decision = True
+        elif '否' in answer.upper():
+            decision = False
+        else:
+            # Fallback if neither YES nor NO is found
+            decision = score_details['overall_score'] >= 6
+        
+        # Clean up for CSV (replace commas with semicolons)
+        clean_prompt = prompt.replace(",", ";").replace("\n", " ").strip()
+        clean_answer = answer.replace(",", ";").replace("\n", " ").strip()
+        
+        # Create log entry with full prompt and response
+        log_entry = [
+            clean_prompt,  # Full prompt with numeric scores
+            clean_answer   # Full response
+        ]
+        
+        return decision, log_entry
+        
+    except Exception as e:
+        print(f"Error calling GPT: {e}")
+        # Default behavior
+        decision = score_details['overall_score'] >= 6
+        
+        # Clean prompt for CSV
+        clean_prompt = prompt.replace(",", ";").replace("\n", " ").strip()
+        
+        # Create default response
+        if decision:
+            default_answer =f"是，{score_details['overall_score']} 的总体兼容性得分符合可接受的阈值。"
+        else:
+            default_answer = f"否，{score_details['overall_score']} 的整体兼容性得分低于可接受的阈值。"
+        
+        log_entry = [
+            clean_prompt,
+            f"API_ERROR: {default_answer}"
+        ]
+        
+        return decision, log_entry
 
-    if '是' in result:
-        flag = True
-    elif '否' in result:
-        flag = False
-    else:
-        flag = -1
 
-    return flag, log
+def ask_gpt_non_single_man_propose(proposer_score_details, current_partner_score_details):
+    """
+    Ask GPT if a non-single man should switch partners based on detailed numeric scores.
+    
+    Args:
+        proposer_score_details (dict): Dictionary containing proposer's detailed scores and importance weights
+        current_partner_score_details (dict): Dictionary containing current partner's detailed scores and importance weights
+    
+    Returns:
+        tuple: (decision (bool), log_entry (list))
+    """
+    age = int(proposer_score_details.get('age', 23))
+    career = proposer_score_details.get('career', 'lawyer/policy work')
+    
+    prompt = f"""假设您是一位 {age} 岁的男性，职业类型为 {career}，目前已匹配到一位伴侣。您当前伴侣的得分（满分 10 分）：吸引力：{current_partner_score_details['attractive']}/10，真诚度：{current_partner_score_details['sincere']}/10，智力：{current_partner_score_details['intelligence']}/10，幽默感：{current_partner_score_details['funny']}/10，野心：{current_partner_score_details['ambition']}/10，共同兴趣：{current_partner_score_details['shared_interests']}/10。一位新女性正在向您求爱，其得分为：吸引力：{proposer_score_details['attractive']}/10，真诚度：{proposer_score_details['sincere']}/10，智力：{proposer_score_details['intelligence']}/10，幽默度：{proposer_score_details['funny']}/10，抱负：{proposer_score_details['ambition']}/10，共同兴趣：{proposer_score_details['shared_interests']}/10。您的重要性权重为：吸引力：{proposer_score_details['attractive_importance']}，真诚度：{proposer_score_details['sincere_importance']}，智力：{proposer_score_details['intelligence_importance']}，幽默度：{proposer_score_details['funny_importance']}，抱负： {proposer_score_details['ambition_importance']}，共同兴趣：{proposer_score_details['shared_interests_importance']}。你会为了新女友离开现在的伴侣吗？你的答案必须是或否，然后说明你的理由。你必须遵守这条规则！你不能说其他话。"""
+
+    try:
+        response = client.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": "您是约会顾问。请回答“是”或“否”，并附上原因。"},
+                {"role": "user", "content": prompt}
+            ]
+        )
+        
+        answer = response.choices[0].message.content.strip()
+        
+        # Extract decision
+        if '是' in answer.upper():
+            decision = True
+        elif '否' in answer.upper():
+            decision = False
+        else:
+            # Fallback based on score comparison
+            decision = proposer_score_details['overall_score'] > current_partner_score_details['overall_score']
+        
+        # Clean up for CSV
+        clean_prompt = prompt.replace(",", ";").replace("\n", " ").strip()
+        clean_answer = answer.replace(",", ";").replace("\n", " ").strip()
+        
+        log_entry = [
+            clean_prompt,
+            clean_answer
+        ]
+        
+        return decision, log_entry
+        
+    except Exception as e:
+        print(f"Error calling GPT: {e}")
+        # Default behavior
+        decision = proposer_score_details['overall_score'] > current_partner_score_details['overall_score']
+        
+        clean_prompt = prompt.replace(",", ";").replace("\n", " ").strip()
+        
+        if decision:
+            default_answer = f"是，新合作伙伴的总体得分更高({proposer_score_details['overall_score']} vs {current_partner_score_details['overall_score']})."
+        else:
+            default_answer = f"否，当前合作伙伴的总体得分相同或更高({current_partner_score_details['overall_score']} vs {proposer_score_details['overall_score']})."
+        
+        log_entry = [
+            clean_prompt,
+            f"API_ERROR: {default_answer}"
+        ]
+        
+        return decision, log_entry
 
 
+def ask_gpt_non_single_woman_propose(proposer_score_details, current_partner_score_details):
+    """
+    Ask GPT if a non-single woman should switch partners based on detailed numeric scores.
+    
+    Args:
+        proposer_score_details (dict): Dictionary containing proposer's detailed scores and importance weights
+        current_partner_score_details (dict): Dictionary containing current partner's detailed scores and importance weights
+    
+    Returns:
+        tuple: (decision (bool), log_entry (list))
+    """
+    age = int(proposer_score_details.get('age', 23))
+    career = proposer_score_details.get('career', 'lawyer/policy work')
+    
+    prompt = f"""假设您是一位 {age} 岁的女性，职业类型为 {career}，目前已匹配到一位伴侣。您当前伴侣的得分（满分 10 分）：吸引力：{current_partner_score_details['attractive']}/10，真诚度：{current_partner_score_details['sincere']}/10，智力：{current_partner_score_details['intelligence']}/10，幽默度：{current_partner_score_details['funny']}/10，野心：{current_partner_score_details['ambition']}/10，共同兴趣：{current_partner_score_details['shared_interests']}/10。一位新男士正在向您求爱，他的得分为：吸引力：{proposer_score_details['attractive']}/10，真诚度： {proposer_score_details['sincere']}/10，智力：{proposer_score_details['intelligence']}/10，幽默感：{proposer_score_details['funny']}/10，抱负：{proposer_score_details['ambition']}/10，共同兴趣：{proposer_score_details['shared_interests']}/10。您的重要性权重为：吸引力：{proposer_score_details['attractive_importance']}，真诚：{proposer_score_details['sincere_importance']}，智力：{proposer_score_details['intelligence_importance']}，幽默感：{proposer_score_details['funny_importance']}，抱负： {proposer_score_details['ambition_importance']}，共同兴趣：{proposer_score_details['shared_interests_importance']}。你会为了新男友离开现在的伴侣吗？你的答案必须是（是）或（否），然后说明你的理由。你必须遵守这条规则！你绝对不能说其他话。"""
 
-if __name__=='__main__':
-    # 示例使用
-    result, log = ask_gpt_Chinese_random(man_score=[25, 30, 'Programmer', 70, 80, 90, 60, 70, 80, 15, 15, 20, 30, 10, 10])
-    # print(result)
+    try:
+        response = client.chat.completions.create(
+            model=model,
+            messages=[
+                {"role": "system", "content": "您是约会顾问。请回答“是”或“否”，并附上原因。"},
+                {"role": "user", "content": prompt}
+            ]
+        )
+        
+        answer = response.choices[0].message.content.strip()
+        
+        # Extract decision
+        if '是' in answer.upper():
+            decision = True
+        elif '否' in answer.upper():
+            decision = False
+        else:
+            # Fallback based on score comparison
+            decision = proposer_score_details['overall_score'] > current_partner_score_details['overall_score']
+        
+        # Clean up for CSV
+        clean_prompt = prompt.replace(",", ";").replace("\n", " ").strip()
+        clean_answer = answer.replace(",", ";").replace("\n", " ").strip()
+        
+        log_entry = [
+            clean_prompt,
+            clean_answer
+        ]
+        
+        return decision, log_entry
+        
+    except Exception as e:
+        print(f"Error calling GPT: {e}")
+        # Default behavior
+        decision = proposer_score_details['overall_score'] > current_partner_score_details['overall_score']
+        
+        clean_prompt = prompt.replace(",", ";").replace("\n", " ").strip()
+        
+        if decision:
+            default_answer = f"是，新伴侣的总体得分更高 ({current_partner_score_details['overall_score']} vs {proposer_score_details['overall_score']})。"
+        else:
+            default_answer = f"否，当前伴侣的总体得分相等或更高 ({current_partner_score_details['overall_score']} vs {proposer_score_details['overall_score']})。"
+        
+        log_entry = [
+            clean_prompt,
+            f"API_ERROR: {default_answer}"
+        ]
+        
+        return decision, log_entry
+
+
+# Optional: Test function
+# def test_functions():
+#     """Test the functions with sample data"""
+#     test_scores = {
+#         'age': 25,
+#         'age_o': 23,
+#         'career': 'engineer',
+#         'overall_score': 7,
+#         'attractive': 6,
+#         'sincere': 8,
+#         'intelligence': 7,
+#         'funny': 8,
+#         'ambition': 6,
+#         'shared_interests': 7,
+#         'attractive_importance': 20,
+#         'sincere_importance': 25,
+#         'intelligence_importance': 20,
+#         'funny_importance': 15,
+#         'ambition_importance': 10,
+#         'shared_interests_importance': 10
+#     }
+    
+#     # Test single man propose
+#     print("Testing single man propose...")
+#     decision, log = ask_gpt_single_man_propose(test_scores)
+#     print(f"Decision: {decision}")
+#     print(f"Log: {log}")
+#     print()
+    
+    # # Test non-single scenario
+    # current_scores = test_scores.copy()
+    # current_scores['overall_score'] = 6
+    # new_scores = test_scores.copy()
+    # new_scores['overall_score'] = 8
+    
+    # print("Testing non-single man propose...")
+    # decision, log = ask_gpt_non_single_man_propose(new_scores, current_scores)
+    # print(f"Decision: {decision}")
+    # print(f"Log: {log}")
+
+
+if __name__ == "__main__":
+    # You can run this to test the functions
+    test_functions()

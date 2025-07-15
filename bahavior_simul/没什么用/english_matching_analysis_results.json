@@ -1,0 +1,206 @@
+{
+  "overall_parameters": {
+    "single_threshold_S": 6.561461764705882,
+    "lambda_exponential": 0.5,
+    "lambda_sigmoid": 0.01,
+    "total_samples": 1315,
+    "single_samples": 371,
+    "switch_samples": 944
+  },
+  "model_evaluation": {
+    "single_accuracy": 0.862533692722372,
+    "switch_accuracy_exp": 0.03283898305084746,
+    "switch_accuracy_sig": 0.036016949152542374
+  },
+  "group_results": {
+    "1": {
+      "n_single": 13,
+      "n_switch": 24,
+      "s_threshold": 6.325,
+      "lambda_exponential": 0.5,
+      "lambda_sigmoid": 0.01,
+      "single_accept_rate": 0.6923076923076923,
+      "switch_accept_rate": 0.0
+    },
+    "2": {
+      "n_single": 24,
+      "n_switch": 68,
+      "s_threshold": 6.175,
+      "lambda_exponential": 0.5,
+      "lambda_sigmoid": 0.01,
+      "single_accept_rate": 0.5833333333333334,
+      "switch_accept_rate": 0.014705882352941176
+    },
+    "3": {
+      "n_single": 14,
+      "n_switch": 20,
+      "s_threshold": 6.4,
+      "lambda_exponential": 0.5,
+      "lambda_sigmoid": 0.01,
+      "single_accept_rate": 0.5714285714285714,
+      "switch_accept_rate": 0.0
+    },
+    "4": {
+      "n_single": 31,
+      "n_switch": 73,
+      "s_threshold": 6.665,
+      "lambda_exponential": 0.5,
+      "lambda_sigmoid": 0.01,
+      "single_accept_rate": 0.45161290322580644,
+      "switch_accept_rate": 0.0410958904109589
+    },
+    "5": {
+      "n_single": 15,
+      "n_switch": 28,
+      "s_threshold": 6.77,
+      "lambda_exponential": 0.5,
+      "lambda_sigmoid": 0.01,
+      "single_accept_rate": 0.3333333333333333,
+      "switch_accept_rate": 0.10714285714285714
+    },
+    "6": {
+      "n_single": 3,
+      "n_switch": 6,
+      "s_threshold": 7.666742857142857,
+      "lambda_exponential": 0.5,
+      "lambda_sigmoid": 0.01,
+      "single_accept_rate": 1.0,
+      "switch_accept_rate": 0.0
+    },
+    "7": {
+      "n_single": 20,
+      "n_switch": 43,
+      "s_threshold": 6.296472097209721,
+      "lambda_exponential": 0.5,
+      "lambda_sigmoid": 0.01,
+      "single_accept_rate": 0.65,
+      "switch_accept_rate": 0.0
+    },
+    "8": {
+      "n_single": 12,
+      "n_switch": 21,
+      "s_threshold": 6.459354064593541,
+      "lambda_exponential": 0.5,
+      "lambda_sigmoid": 0.01,
+      "single_accept_rate": 0.5833333333333334,
+      "switch_accept_rate": 0.0
+    },
+    "9": {
+      "n_single": 27,
+      "n_switch": 80,
+      "s_threshold": 6.470981106889311,
+      "lambda_exponential": 0.5,
+      "lambda_sigmoid": 0.01,
+      "single_accept_rate": 0.5925925925925926,
+      "switch_accept_rate": 0.0125
+    },
+    "10": {
+      "n_single": 15,
+      "n_switch": 27,
+      "s_threshold": 6.694117647058823,
+      "lambda_exponential": 0.5,
+      "lambda_sigmoid": 0.01,
+      "single_accept_rate": 0.5333333333333333,
+      "switch_accept_rate": 0.037037037037037035
+    },
+    "11": {
+      "n_single": 30,
+      "n_switch": 97,
+      "s_threshold": 6.574999999999999,
+      "lambda_exponential": 0.5,
+      "lambda_sigmoid": 0.01,
+      "single_accept_rate": 0.5333333333333333,
+      "switch_accept_rate": 0.0
+    },
+    "12": {
+      "n_single": 17,
+      "n_switch": 48,
+      "s_threshold": 6.720000000000001,
+      "lambda_exponential": 0.5,
+      "lambda_sigmoid": 0.01,
+      "single_accept_rate": 0.7058823529411765,
+      "switch_accept_rate": 0.0625
+    },
+    "13": {
+      "n_single": 12,
+      "n_switch": 8,
+      "s_threshold": 6.355555555555556,
+      "lambda_exponential": 0.5,
+      "lambda_sigmoid": 0.01,
+      "single_accept_rate": 0.5833333333333334,
+      "switch_accept_rate": 0.0
+    },
+    "14": {
+      "n_single": 8,
+      "n_switch": 52,
+      "s_threshold": 6.525,
+      "lambda_exponential": 0.5,
+      "lambda_sigmoid": 0.01,
+      "single_accept_rate": 0.875,
+      "switch_accept_rate": 0.019230769230769232
+    },
+    "15": {
+      "n_single": 19,
+      "n_switch": 62,
+      "s_threshold": 7.0,
+      "lambda_exponential": 0.5,
+      "lambda_sigmoid": 0.01,
+      "single_accept_rate": 0.6842105263157895,
+      "switch_accept_rate": 0.08064516129032258
+    },
+    "16": {
+      "n_single": 5,
+      "n_switch": 15,
+      "s_threshold": 7.777777777777778,
+      "lambda_exponential": 0.5,
+      "lambda_sigmoid": 0.01,
+      "single_accept_rate": 1.0,
+      "switch_accept_rate": 0.0
+    },
+    "17": {
+      "n_single": 11,
+      "n_switch": 47,
+      "s_threshold": 6.48,
+      "lambda_exponential": 0.5,
+      "lambda_sigmoid": 0.01,
+      "single_accept_rate": 0.8181818181818182,
+      "switch_accept_rate": 0.02127659574468085
+    },
+    "18": {
+      "n_single": 9,
+      "n_switch": 15,
+      "s_threshold": 7.15,
+      "lambda_exponential": 0.5,
+      "lambda_sigmoid": 0.01,
+      "single_accept_rate": 0.4444444444444444,
+      "switch_accept_rate": 0.06666666666666667
+    },
+    "19": {
+      "n_single": 26,
+      "n_switch": 54,
+      "s_threshold": 6.8100000000000005,
+      "lambda_exponential": 0.5,
+      "lambda_sigmoid": 0.01,
+      "single_accept_rate": 0.5,
+      "switch_accept_rate": 0.037037037037037035
+    },
+    "20": {
+      "n_single": 12,
+      "n_switch": 13,
+      "s_threshold": 6.95,
+      "lambda_exponential": 0.5,
+      "lambda_sigmoid": 0.01,
+      "single_accept_rate": 0.5,
+      "switch_accept_rate": 0.07692307692307693
+    },
+    "21": {
+      "n_single": 48,
+      "n_switch": 143,
+      "s_threshold": 6.38421052631579,
+      "lambda_exponential": 0.5,
+      "lambda_sigmoid": 0.01,
+      "single_accept_rate": 0.25,
+      "switch_accept_rate": 0.055944055944055944
+    }
+  }
+}

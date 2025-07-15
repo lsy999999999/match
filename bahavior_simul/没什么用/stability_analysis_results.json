@@ -1,0 +1,178 @@
+{
+  "overall_statistics": {
+    "total_expected_blocking_pairs": 2147.42010207003,
+    "total_matched_pairs": 402,
+    "average_blocking_pairs_per_group": 102.25810009857287,
+    "stability_ratio": -4.341841049925448
+  },
+  "group_summaries": {
+    "1": {
+      "group": 1,
+      "num_men": 18,
+      "num_women": 18,
+      "num_matched_pairs": 18,
+      "expected_blocking_pairs": 76.51689395098573,
+      "stability_score": -3.2509385528325403
+    },
+    "2": {
+      "group": 2,
+      "num_men": 28,
+      "num_women": 28,
+      "num_matched_pairs": 28,
+      "expected_blocking_pairs": 189.0597051543006,
+      "stability_score": -5.752132326939306
+    },
+    "3": {
+      "group": 3,
+      "num_men": 16,
+      "num_women": 16,
+      "num_matched_pairs": 16,
+      "expected_blocking_pairs": 60.02611468113333,
+      "stability_score": -2.751632167570833
+    },
+    "4": {
+      "group": 4,
+      "num_men": 28,
+      "num_women": 28,
+      "num_matched_pairs": 28,
+      "expected_blocking_pairs": 189.05451987863134,
+      "stability_score": -5.751947138522548
+    },
+    "5": {
+      "group": 5,
+      "num_men": 10,
+      "num_women": 10,
+      "num_matched_pairs": 10,
+      "expected_blocking_pairs": 22.51961063911398,
+      "stability_score": -1.251961063911398
+    },
+    "6": {
+      "group": 6,
+      "num_men": 6,
+      "num_women": 6,
+      "num_matched_pairs": 6,
+      "expected_blocking_pairs": 7.50719154966145,
+      "stability_score": -0.2511985916102417
+    },
+    "7": {
+      "group": 7,
+      "num_men": 26,
+      "num_women": 26,
+      "num_matched_pairs": 26,
+      "expected_blocking_pairs": 162.55339625913854,
+      "stability_score": -5.2520537022745595
+    },
+    "8": {
+      "group": 8,
+      "num_men": 14,
+      "num_women": 14,
+      "num_matched_pairs": 14,
+      "expected_blocking_pairs": 45.52499942460466,
+      "stability_score": -2.251785673186047
+    },
+    "9": {
+      "group": 9,
+      "num_men": 32,
+      "num_women": 32,
+      "num_matched_pairs": 32,
+      "expected_blocking_pairs": 248.0761481895442,
+      "stability_score": -6.752379630923256
+    },
+    "10": {
+      "group": 10,
+      "num_men": 16,
+      "num_women": 16,
+      "num_matched_pairs": 16,
+      "expected_blocking_pairs": 60.04094336503009,
+      "stability_score": -2.7525589603143805
+    },
+    "11": {
+      "group": 11,
+      "num_men": 32,
+      "num_women": 32,
+      "num_matched_pairs": 32,
+      "expected_blocking_pairs": 248.07654905262206,
+      "stability_score": -6.752392157894439
+    },
+    "12": {
+      "group": 12,
+      "num_men": 24,
+      "num_women": 24,
+      "num_matched_pairs": 24,
+      "expected_blocking_pairs": 138.06328620951697,
+      "stability_score": -4.752636925396541
+    },
+    "13": {
+      "group": 13,
+      "num_men": 14,
+      "num_women": 14,
+      "num_matched_pairs": 14,
+      "expected_blocking_pairs": 45.51474923942127,
+      "stability_score": -2.251053517101519
+    },
+    "14": {
+      "group": 14,
+      "num_men": 14,
+      "num_women": 14,
+      "num_matched_pairs": 14,
+      "expected_blocking_pairs": 45.524262033920735,
+      "stability_score": -2.2517330024229096
+    },
+    "15": {
+      "group": 15,
+      "num_men": 26,
+      "num_women": 26,
+      "num_matched_pairs": 26,
+      "expected_blocking_pairs": 162.60795032143628,
+      "stability_score": -5.2541519354398565
+    },
+    "16": {
+      "group": 16,
+      "num_men": 10,
+      "num_women": 10,
+      "num_matched_pairs": 10,
+      "expected_blocking_pairs": 22.50943698815828,
+      "stability_score": -1.2509436988158282
+    },
+    "17": {
+      "group": 17,
+      "num_men": 18,
+      "num_women": 18,
+      "num_matched_pairs": 18,
+      "expected_blocking_pairs": 76.5384325835052,
+      "stability_score": -3.2521351435280668
+    },
+    "18": {
+      "group": 18,
+      "num_men": 8,
+      "num_women": 8,
+      "num_matched_pairs": 8,
+      "expected_blocking_pairs": 14.014586765306218,
+      "stability_score": -0.7518233456632772
+    },
+    "19": {
+      "group": 19,
+      "num_men": 26,
+      "num_women": 26,
+      "num_matched_pairs": 26,
+      "expected_blocking_pairs": 162.58176128792073,
+      "stability_score": -5.253144664920028
+    },
+    "20": {
+      "group": 20,
+      "num_men": 12,
+      "num_women": 12,
+      "num_matched_pairs": 12,
+      "expected_blocking_pairs": 33.041333747304535,
+      "stability_score": -1.7534444789420447
+    },
+    "21": {
+      "group": 21,
+      "num_men": 24,
+      "num_women": 24,
+      "num_matched_pairs": 24,
+      "expected_blocking_pairs": 138.0682307487742,
+      "stability_score": -4.752842947865592
+    }
+  }
+}
