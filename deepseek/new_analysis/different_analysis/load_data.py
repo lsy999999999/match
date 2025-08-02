@@ -1,4 +1,3 @@
-
 import pandas as pd
 import json
 import os
@@ -108,48 +107,125 @@ def load_all_group_data_for_model(model_key):
     return combined_df, all_matchings
 
 
+
+def load_matchings_from_json(model_key):
+    """
+    【新函数】专门加载一个模型所有组的JSON最终匹配结果。
+    """
+    if model_key not in config:
+        print(f"错误: 模型键 '{model_key}' 在 config.py 中未找到。")
+        return []
+
+    model_config = config[model_key]
+    base_path = model_config.get("base_path", "")
+    json_template = model_config.get("json_template", "")
+    num_groups = model_config.get("num_groups", 0)
+    model_label = model_config.get("label", model_key)
+    
+    all_matchings = []
+    print(f"--- 正在为 '{model_label}' 加载JSON匹配结果 ---")
+
+    for i in range(1, num_groups + 1):
+        json_path = os.path.join(base_path, json_template.format(group_id=i))
+        try:
+            with open(json_path, 'r', encoding='utf-8') as f_json:
+                file_content = f_json.read().strip()
+                if not file_content: continue
+                
+                json_objects = re.findall(r'\{[^{}]*\}', file_content)
+                parsed_data = None
+                if not json_objects:
+                    try: parsed_data = json.loads(file_content)
+                    except json.JSONDecodeError: pass
+                elif len(json_objects) == 1:
+                    try: parsed_data = json.loads(json_objects[0])
+                    except json.JSONDecodeError: pass
+                else:
+                    try:
+                        json_array_string = f"[{','.join(json_objects)}]"
+                        data_list = json.loads(json_array_string)
+                        if data_list: parsed_data = data_list[-1]
+                    except json.JSONDecodeError: pass
+                
+                if parsed_data is not None:
+                    # 关键：将键和值都转为整数
+                    cleaned_matching = {
+                        int(k): (int(v) if str(v).isdigit() else v) 
+                        for k, v in parsed_data.items()
+                    }
+                    all_matchings.append(cleaned_matching)
+        except FileNotFoundError:
+            # print(f"  提示: JSON文件不存在 {json_path}")
+            pass
+        except Exception as e:
+            print(f"  错误: 处理JSON文件 {json_path} 时发生未知错误: {e}")
+
+    print(f"--- 为 '{model_label}' 成功加载了 {len(all_matchings)} 个JSON匹配结果。 ---")
+    return all_matchings
+
 def load_source_scores(path):
-    """
-    加载原始Excel评分数据，计算并返回每个评价的总分。
-    """
+    """加载原始Excel评分数据，计算并返回每个评价的总分。"""
+    # (此函数保持不变)
     try:
         df = pd.read_excel(path)
-        score_cols = ['attractive', 'sincere', 'intelligence', 'funny', 'ambition', 'shared_interests']
-        
-        # 修正可能的拼写错误 (根据你之前截图的信息)
-        if 'intelliger' in df.columns and 'intelligence' not in df.columns:
-            df.rename(columns={'intelliger': 'intelligence'}, inplace=True)
-        if 'ambition_partner' in df.columns and 'ambition' in df.columns: # 处理可能的多种列名
-             pass # 假设'ambition'是正确的
-        
-
-        # 列名应为 '..._partner'
-        partner_score_cols = [f'{col}_partner' for col in score_cols]
-        if all(col in df.columns for col in partner_score_cols):
-             score_cols = partner_score_cols
-             print("注意: 正在使用 '_partner' 后缀的评分列。")
-        
+        # 根据你之前的代码，列名应为 '..._partner'
+        score_cols = [f'{d}_partner' for d in ['attractive', 'sincere', 'intelligence', 'funny', 'ambition', 'shared_interests']]
         required_cols = ['iid', 'pid'] + score_cols
         for col in required_cols:
-            if col not in df.columns:
-                print(f"错误: 源数据Excel文件中缺少必需的列: '{col}'")
-                return None
-        
+            if col not in df.columns: return None
         for col in score_cols:
             df[col] = pd.to_numeric(df[col], errors='coerce')
         df[score_cols] = df[score_cols].fillna(0)
         df['total_score'] = df[score_cols].sum(axis=1)
-        
         score_dict = df.set_index(['iid', 'pid'])['total_score'].to_dict()
         print("源数据Excel评分 (总分) 已成功加载并处理。")
         return score_dict
-        
-    except FileNotFoundError:
-        print(f"错误: 源数据文件未找到: {path}")
-        return None
     except Exception as e:
-        print(f"加载源数据Excel文件时发生未知错误: {e}")
+        print(f"加载源数据Excel文件时出错: {e}")
         return None
+
+# def load_source_scores(path):
+#     """
+#     加载原始Excel评分数据，计算并返回每个评价的总分。
+#     """
+#     try:
+#         df = pd.read_excel(path)
+#         score_cols = ['attractive', 'sincere', 'intelligence', 'funny', 'ambition', 'shared_interests']
+        
+#         # 修正可能的拼写错误 (根据你之前截图的信息)
+#         if 'intelliger' in df.columns and 'intelligence' not in df.columns:
+#             df.rename(columns={'intelliger': 'intelligence'}, inplace=True)
+#         if 'ambition_partner' in df.columns and 'ambition' in df.columns: # 处理可能的多种列名
+#              pass # 假设'ambition'是正确的
+        
+
+#         # 列名应为 '..._partner'
+#         partner_score_cols = [f'{col}_partner' for col in score_cols]
+#         if all(col in df.columns for col in partner_score_cols):
+#              score_cols = partner_score_cols
+#              print("注意: 正在使用 '_partner' 后缀的评分列。")
+        
+#         required_cols = ['iid', 'pid'] + score_cols
+#         for col in required_cols:
+#             if col not in df.columns:
+#                 print(f"错误: 源数据Excel文件中缺少必需的列: '{col}'")
+#                 return None
+        
+#         for col in score_cols:
+#             df[col] = pd.to_numeric(df[col], errors='coerce')
+#         df[score_cols] = df[score_cols].fillna(0)
+#         df['total_score'] = df[score_cols].sum(axis=1)
+        
+#         score_dict = df.set_index(['iid', 'pid'])['total_score'].to_dict()
+#         print("源数据Excel评分 (总分) 已成功加载并处理。")
+#         return score_dict
+        
+#     except FileNotFoundError:
+#         print(f"错误: 源数据文件未找到: {path}")
+#         return None
+#     except Exception as e:
+#         print(f"加载源数据Excel文件时发生未知错误: {e}")
+#         return None
 
 def load_source_scores_vectorized(path):
     """

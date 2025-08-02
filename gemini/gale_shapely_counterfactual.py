@@ -115,10 +115,10 @@ def gale_shapley(men_preferences, women_preferences, men_attr, women_attr, outpu
             handle_existing_choice(proposer, best_choice, matching, logtext, men_attr, women_attr, single_list)
     
     # --- 文件保存 ---
-    output_path = "/home/lsy/match/gemini/0713_gemini_eng"
+    output_path = "/home/lsy/match/gemini/0725_gemini_eng"
     os.makedirs(output_path, exist_ok=True)
-    csv_filename = os.path.join(output_path, f"0713_gemini_eng_group{output_idx}.csv")
-    json_filename = os.path.join(output_path, f"0713_gemini_eng_group{output_idx}.json")
+    csv_filename = os.path.join(output_path, f"0725_gemini_eng_group{output_idx}.csv")
+    json_filename = os.path.join(output_path, f"0725_gemini_eng_group{output_idx}.json")
 
     with open(csv_filename, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)

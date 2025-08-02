@@ -111,10 +111,10 @@ def gale_shapley(men_preferences, women_preferences, men_attr, women_attr, outpu
             handle_existing_choice(proposer, best_choice, matching, logtext, men_attr, women_attr, single_list)
     
     # --- 文件保存 ---
-    output_path = "/home/lsy/match/gemini"
+    output_path = "/home/lsy/match/gemini/0728_gemini_Chinese"
     os.makedirs(output_path, exist_ok=True)
-    csv_filename = os.path.join(output_path, f"0713_gemini_Chinese_group{output_idx}.csv")
-    json_filename = os.path.join(output_path, f"0713_gemini_Chinese_group{output_idx}.json")
+    csv_filename = os.path.join(output_path, f"0728_gemini_Chinese_group{output_idx}.csv")
+    json_filename = os.path.join(output_path, f"0728_gemini_Chinese_group{output_idx}.json")
 
     with open(csv_filename, mode='w', newline='', encoding='utf-8') as file:
         writer = csv.writer(file)
@@ -130,9 +130,9 @@ def gale_shapley(men_preferences, women_preferences, men_attr, women_attr, outpu
 # --------------------------------------------------------------------------
 if __name__ == '__main__':
   # 定义输入组号和输出组号的起始点
-  input_start_group = 2
-  output_start_group = 23
-  num_simulations = 20 # 我们要进行21次模拟
+  input_start_group = 1
+  output_start_group = 22
+  num_simulations = 21 # 我们要进行21次模拟
   
 
   # 使用一个循环来控制21次模拟

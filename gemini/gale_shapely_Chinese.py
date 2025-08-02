@@ -59,9 +59,9 @@ def gale_shapley(men_preferences, women_preferences, men_attr, women_attr, idx):
         handle_existing_choice(proposer, best_choice, matching, logtext, attr, men_attr, women_attr,single_list, is_man)
       print(matching)
 
-    log_text("/home/lsy/match/gemini/0713_gemini_Chinese/0713_gemini_Chinese_group"+str(idx)+".csv", logtext)
+    log_text("/home/lsy/match/gemini/0728_gemini_Chinese/0728_gemini_Chinese_group"+str(idx)+".csv", logtext)
     js_obj = json.dumps(matching, ensure_ascii=False, default=default_dump)
-    with open("/home/lsy/match/gemini/0713_gemini_Chinese/0713_gemini_Chinese_group"+str(idx)+".json", "a") as file:
+    with open("/home/lsy/match/gemini/0728_gemini_Chinese/0728_gemini_Chinese_group"+str(idx)+".json", "a") as file:
         file.write(js_obj)
     return matching
 

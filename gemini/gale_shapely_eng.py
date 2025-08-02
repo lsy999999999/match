@@ -59,9 +59,9 @@ def gale_shapley(men_preferences, women_preferences, men_attr, women_attr, idx):
         handle_existing_choice(proposer, best_choice, matching, logtext, attr, men_attr, women_attr,single_list, is_man)
       print(matching)
 
-    log_text("/home/lsy/match/gemini/0713_gemini_eng/0713_gemini_eng_group"+str(idx)+".csv", logtext)
+    log_text("/home/lsy/match/gemini/0725_gemini_eng/0725_gemini_eng_group"+str(idx)+".csv", logtext)
     js_obj = json.dumps(matching, ensure_ascii=False, default=default_dump)
-    with open("/home/lsy/match/gemini/0713_gemini_eng/0713_gemini_eng_group"+str(idx)+".json", "a") as file:
+    with open("/home/lsy/match/gemini/0725_gemini_eng/0725_gemini_eng_group"+str(idx)+".json", "a") as file:
         file.write(js_obj)
     return matching
 
@@ -227,7 +227,7 @@ def log_text(logfile, logtext):
 
 
 if __name__=='__main__':
-  for i in range(2,22):
+  for i in range(1,22):
     # for _ in range(5):
     l1,l2 = read_file(r'/home/lsy/match/dataset/save_merge_select_null_3.xlsx', i)
     dict1, dict2 = read_file_attr(r'/home/lsy/match/dataset/save_merge_select_null_3.xlsx', i)
