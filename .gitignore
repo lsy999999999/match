@@ -1,0 +1,16 @@
+# Envs / installers / caches
+py312/
+.conda/
+.venv/
+env/
+venv/
+Anaconda*.sh
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.cache/
+*.log
+
+# 可选：数据或大文件目录（按需加）
+data/
+models/
