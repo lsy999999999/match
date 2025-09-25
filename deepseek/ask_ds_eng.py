@@ -6,7 +6,7 @@ import numpy as np
 # Initialize OpenAI client
 api_key = "sk-DG9ZYLfnjSbUPt3TE6OTpN3Ge9Mr9hLAgg4UBWxCba3ryvYT"
 client = OpenAI(api_key=api_key, base_url="https://aigcbest.top/v1")
-model = "deepseek-ai/DeepSeek-R1"
+model = "DeepSeek-V3"
 
 def ask_gpt_single_man_propose(score_details):
     """
