@@ -20,9 +20,9 @@ import numpy as np
 import pandas as pd
 
 # ========= 仅改这 3 行 =========
-PARAMS_JSON = "/home/lsy/match/bahavior_simul/1009analysis/unified_params_gpt4_zh_fitting.json"
-MATCH_DIR   = "/home/lsy/match/bahavior_simul/0619_gpt4_turbo_Chinese"
-OUTPUT_CSV  = "/home/lsy/match/bahavior_simul/1009analysis/different_analysis/Ebp_from_unified_json_0619_zh_21.csv"
+PARAMS_JSON = "/home/lsy/match/bahavior_simul/1009analysis/unified_params_gpt4_en_fitting.json"
+MATCH_DIR   = "/home/lsy/match/bahavior_simul/0627_gpt4_eng"
+OUTPUT_CSV  = "/home/lsy/match/bahavior_simul/1009analysis/different_analysis/Ebp_from_unified_json_0627_en_21.csv"
 # =================================
 
 REPO_ROOT = "/home/lsy/match"

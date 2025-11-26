@@ -9,54 +9,66 @@ from config import config
 
 def load_all_group_data_for_model(model_key):
     """
-    根据模型键加载CSV决策日志数据。
+    根据模型键加载CSV决策日志数据。支持多 run 结构。
     """
     if model_key not in config:
         print(f"错误: 模型键 '{model_key}' 在 config.py 中未找到。")
-        return pd.DataFrame(), [] # 返回空的DataFrame和列表
+        return pd.DataFrame(), []
 
     model_config = config[model_key]
     base_path = model_config.get("base_path", "")
     csv_template = model_config.get("csv_template", "")
     num_groups = model_config.get("num_groups", 0)
+    # 获取 run 的数量，默认为 1 (兼容旧代码)
+    num_runs = model_config.get("num_runs", 1)
     
     all_dfs_data = []
     
-    for i in range(1, num_groups + 1):
-        csv_path = os.path.join(base_path, csv_template.format(group_id=i))
-        try:
-            with open(csv_path, 'r', encoding='utf-8') as f_csv:
-                reader = csv.reader(f_csv) # 使用更简单的默认reader
-                for row_num, row in enumerate(reader):
-                    # 你的CSV日志有6列，这是我们需要的
-                    if len(row) == 6:
-                        try:
-                            # 提取数据，并进行类型转换
-                            current_partner_str = str(row[4]).strip()
-                            all_dfs_data.append({
-                                'prompt': str(row[0]),
-                                'reason': str(row[1]),
-                                'target': int(row[2]),
-                                'proposer': int(row[3]),
-                                'current_partner': int(current_partner_str) if current_partner_str else None,
-                                'result': int(row[5]),
-                                'group': i
-                            })
-                        except (ValueError, IndexError):
-                            # 跳过无法正确转换的行
-                            pass
-        except FileNotFoundError:
-            pass # 文件不存在是正常情况，如果组数设多了
-        except Exception as e:
-            print(f"  错误: 处理CSV文件 {csv_path} 时发生未知错误: {e}")
+    # 外层循环 Group
+    for g_id in range(1, num_groups + 1):
+        # 内层循环 Run
+        for r_id in range(1, num_runs + 1):
+            # 根据模板格式化路径
+            # 检查模板是否包含 run_id，兼容旧的只有 group_id 的模板
+            if "{run_id}" in csv_template:
+                filename = csv_template.format(group_id=g_id, run_id=r_id)
+            else:
+                # 如果是旧模板，只循环一次 run (或者你可以在这里加逻辑)
+                if r_id > 1: continue 
+                filename = csv_template.format(group_id=g_id)
+
+            csv_path = os.path.join(base_path, filename)
+            
+            try:
+                with open(csv_path, 'r', encoding='utf-8') as f_csv:
+                    reader = csv.reader(f_csv)
+                    for row in reader:
+                        if len(row) == 6:
+                            try:
+                                current_partner_str = str(row[4]).strip()
+                                all_dfs_data.append({
+                                    'prompt': str(row[0]),
+                                    'reason': str(row[1]),
+                                    'target': int(row[2]),
+                                    'proposer': int(row[3]),
+                                    'current_partner': int(current_partner_str) if current_partner_str else None,
+                                    'result': int(row[5]),
+                                    'group': g_id,
+                                    'run': r_id  # 记录是第几次 run
+                                })
+                            except (ValueError, IndexError):
+                                pass
+            except FileNotFoundError:
+                # 很多时候只跑了部分组，文件找不到不报错，静默跳过
+                pass 
+            except Exception as e:
+                print(f"  错误: 处理文件 {csv_path} 时发生错误: {e}")
 
     if not all_dfs_data:
-        print(f"警告: 模型 '{model_config.get('label', model_key)}' 没有加载到任何有效的CSV数据。")
-        return pd.DataFrame(), [] # 仍然需要返回两个值
+        print(f"警告: 模型 '{model_config.get('label', model_key)}' 没有加载到数据。")
+        return pd.DataFrame(), []
 
     combined_df = pd.DataFrame(all_dfs_data)
-    
-    # 因为JSON文件在这个分析中不是必需的，我们返回一个空列表作为占位符
     return combined_df, []
 
 

@@ -21,9 +21,9 @@ import pandas as pd
 
 # ======== 按需硬编码（3处）========
 REPO_ROOT   = "/home/lsy/match"
-MODEL_KEY   = "gpt4_zh_fitting"
+MODEL_KEY   = "gpt4_zh_makeup"
 PARAMS_JSON = "/home/lsy/match/bahavior_simul/1009analysis/unified_params_gpt4_zh_fitting.json"
-OUTPUT_CSV  = "/home/lsy/match/bahavior_simul/1009analysis/different_analysis/Ebp_from_unified_json_zh.csv"
+OUTPUT_CSV  = "/home/lsy/match/bahavior_simul/1009analysis/different_analysis/Ebp_from_unified_json_zh_makeup.csv"
 # =================================
 
 for p in [REPO_ROOT]:

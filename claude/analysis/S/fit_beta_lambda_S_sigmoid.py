@@ -14,8 +14,8 @@ import pandas as pd
 
 # ========= 按实际修改的常量（3 行） =========
 REPO_ROOT  = "/home/lsy/match"
-ANALYSIS_DIR = "/home/lsy/match/gemini/analysis"
-MODEL_KEY  = "gemini_en_fitting"   # 对应 0627_gpt4_eng
+ANALYSIS_DIR = "/home/lsy/match/claude/analysis"
+MODEL_KEY  = "claude_en_fitting"   # 对应 0627_gpt4_eng
 # =========================================
 
 # 让仓库模块可 import（优先 1009analysis 下的版本）
