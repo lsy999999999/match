@@ -20,9 +20,9 @@ import numpy as np
 import pandas as pd
 
 # ========= 仅改这 3 行 =========
-PARAMS_JSON = "/home/lsy/match/gemini/analysis/unified_params_gemini_zh_fitting.json"
-MATCH_DIR   = "/home/lsy/match/gemini/0713_gemini_Chinese"
-OUTPUT_CSV  = "/home/lsy/match/gemini/analysis/blockingPair/Ebp_from_unified_json_0713_zh_21.csv"
+PARAMS_JSON = "/home/lsy/match/gemini/analysis/unified_params_gemini_en_fitting.json"
+MATCH_DIR   = "/home/lsy/match/gemini/0725_gemini_eng"
+OUTPUT_CSV  = "/home/lsy/match/gemini/analysis/different_analysis/Ebp_from_unified_json_0725_en_21.csv"
 # =================================
 
 REPO_ROOT = "/home/lsy/match"
@@ -32,6 +32,9 @@ if REPO_ROOT not in sys.path:
 from config import config
 from load_data import load_source_scores
 from gale_shapley_classic import classic_gale_shapley_matcher
+
+# 单身状态对应的客观分数（由 unified_params 的 s0 设置）
+SINGLE_SCORE: Optional[float] = None
 
 # ---------- 统一模型 ----------
 def _sigmoid(x: float) -> float:
@@ -47,6 +50,14 @@ def _p_switch(s_new: Optional[float], s_cur: Optional[float],
 
 # ---------- 偏好构造（客观六维×重要性） ----------
 def _build_objective_prefs(df_group: pd.DataFrame) -> Tuple[Dict[int, List[int]], Dict[int, List[int]]]:
+    """
+    构造 men_prefs / women_prefs：
+    - 先按六维客观打分 × 重要性计算 weighted_score；
+    - 再为每个人在自己的偏好表中插入一个 “single/self_id” 选项，分数视为 SINGLE_SCORE，
+      并根据 SINGLE_SCORE 在该人的客观分数序列中的位置插入。
+    这样 Gale-Shapley 在运行时就可以把 self_id 视作一个普通候选，且位置由 S 决定。
+    """
+    global SINGLE_SCORE
     dims = ['attractive','sincere','intelligence','funny','ambition','shared_interests']
     score_cols = [f'{d}_partner' for d in dims]
     imp_cols   = [f'{d}_important' for d in dims]
@@ -73,38 +84,104 @@ def _build_objective_prefs(df_group: pd.DataFrame) -> Tuple[Dict[int, List[int]]
     if not women_ids:
         women_ids = sorted(df['pid'].dropna().astype(int).unique().tolist())
 
-    men_prefs = {
-        m: df[df['iid'] == m].sort_values('weighted_score', ascending=False)['pid'].astype(int).tolist()
-        for m in men_ids
-    }
-    women_prefs = {
-        w: df[df['pid'] == w].sort_values('weighted_score', ascending=False)['iid'].astype(int).tolist()
-        for w in women_ids
-    }
+    def _insert_self_option(sorted_ids: List[int], sorted_scores: List[float], self_id: int) -> List[int]:
+        """
+        给定该人的候选列表及对应分数（按分数降序），
+        在 SINGLE_SCORE 对应的位置插入 self_id。
+        若 SINGLE_SCORE 为 None，则保持原顺序。
+        """
+        if SINGLE_SCORE is None:
+            return list(sorted_ids)
+
+        s0 = float(SINGLE_SCORE)
+        # 找到第一个 score < s0 的位置，在此处插入 self_id
+        pos = 0
+        while pos < len(sorted_scores) and float(sorted_scores[pos]) >= s0:
+            pos += 1
+        return list(sorted_ids[:pos]) + [self_id] + list(sorted_ids[pos:])
+
+    # men 的偏好：对每个 m，用 df 中 (iid==m) 的记录构造他的候选 woman 列表
+    men_prefs: Dict[int, List[int]] = {}
+    for m in men_ids:
+        sub = df[df['iid'] == m].copy()
+        if sub.empty:
+            # 没有任何记录：如果有 SINGLE_SCORE，就至少把自己放进去
+            men_prefs[m] = [m] if SINGLE_SCORE is not None else []
+            continue
+        sub = sub.sort_values('weighted_score', ascending=False)
+        cand_ids    = sub['pid'].astype(int).tolist()
+        cand_scores = sub['weighted_score'].astype(float).tolist()
+        men_prefs[m] = _insert_self_option(cand_ids, cand_scores, m)
+
+    # women 的偏好：对每个 w，用 df 中 (pid==w) 的记录构造她的候选 man 列表
+    women_prefs: Dict[int, List[int]] = {}
+    for w in women_ids:
+        sub = df[df['pid'] == w].copy()
+        if sub.empty:
+            women_prefs[w] = [w] if SINGLE_SCORE is not None else []
+            continue
+        sub = sub.sort_values('weighted_score', ascending=False)
+        cand_ids    = sub['iid'].astype(int).tolist()
+        cand_scores = sub['weighted_score'].astype(float).tolist()
+        women_prefs[w] = _insert_self_option(cand_ids, cand_scores, w)
+
     return men_prefs, women_prefs
 
 # ---------- 期望阻塞对 ----------
 def _expected_numbp_for_matching(matching: Dict[int, Any],
                                  men_ids: List[int], women_ids: List[int],
                                  score_dict: Dict[Tuple[int, int], float],
-                                 beta0: float, lam: float, s0: float) -> float:
+                                 beta0: float, lam: float, s0: float,
+                                 truncate_by_s0: bool = False) -> float:
+    """
+    计算给定 matching 的期望阻塞对数量 E[#bp]。
+
+    参数：
+    - truncate_by_s0=True 时（用于 Human/GS）：
+        若某一对 (m,w) 中，任一方向的客观分数 score(m,w) 或 score(w,m) < s0，
+        则这对直接跳过，不计入 E[#bp]（“低于单身分数的候选不视为真正的 blocking pair”）。
+      truncate_by_s0=False 时（用于 AI），保留所有分数（不截断）。
+    - 对于匹配到 self_id 的人（matching[x] == x），视为单身，其当前分数 s_cur = s0
+      （在 _p_switch 中通过 s_cur=None→s0 实现）。
+    """
     total = 0.0
     for m in men_ids:
         for w in women_ids:
+            # 已经匹配在一起的 (m,w) 不构成阻塞对
             if matching.get(m) == w:
                 continue
 
+            # 互评分数
+            s_mw = score_dict.get((m, w))
+            s_wm = score_dict.get((w, m))
+
+            # Human 端截断：任一方向 score < s0，则该对直接跳过
+            if truncate_by_s0:
+                if s_mw is None or s_wm is None:
+                    continue
+                if float(s_mw) < float(s0) or float(s_wm) < float(s0):
+                    continue
+
+            # m 的当前对象及分数（self_id 或单身都视作 s0）
             m_partner = matching.get(m)
-            s_mw   = score_dict.get((m, w))
-            s_mcur = None if (m_partner in [None, "rejected"]) else score_dict.get((m, int(m_partner)))
+            if m_partner in [None, "rejected"] or m_partner == m:
+                s_mcur = None  # 在 _p_switch 中会被替换为 s0
+            else:
+                s_mcur = score_dict.get((m, int(m_partner)))
+
             p1 = _p_switch(s_mw, s_mcur, beta0, lam, s0)
 
+            # w 的当前对象及分数（self_id 或单身都视作 s0）
             w_partner = matching.get(w)
-            s_wm   = score_dict.get((w, m))
-            s_wcur = None if (w_partner in [None, "rejected"]) else score_dict.get((w, int(w_partner)))
+            if w_partner in [None, "rejected"] or w_partner == w:
+                s_wcur = None
+            else:
+                s_wcur = score_dict.get((w, int(w_partner)))
+
             p2 = _p_switch(s_wm, s_wcur, beta0, lam, s0)
 
             total += p1 * p2
+
     return float(total)
 
 # ---------- 匹配对称化 ----------
@@ -169,7 +246,9 @@ def load_unified_params(json_path: str) -> Tuple[float, float, float]:
 
 # ================= 主流程 =================
 def main():
+    global SINGLE_SCORE
     beta0, lam, s0 = load_unified_params(PARAMS_JSON)
+    SINGLE_SCORE = s0  # 把拟合出来的 S 存成全局单身分数
     print(f"[Unified Params] beta0={beta0:.6f}, lambda={lam:.6f}, s0={s0:.6f}")
 
     # 源 Excel
@@ -216,8 +295,15 @@ def main():
         human_matching = _symmetrize_matching(human_matching_raw)
 
         # 计算 E[#bp]
-        e_ai = _expected_numbp_for_matching(ai_matching, men_ids, women_ids, score_dict, beta0, lam, s0)
-        e_hu = _expected_numbp_for_matching(human_matching, men_ids, women_ids, score_dict, beta0, lam, s0)
+        # AI：不过滤（不截断），Human(GS)：去除低于单身分数 s0 的候选
+        e_ai = _expected_numbp_for_matching(
+            ai_matching, men_ids, women_ids, score_dict, beta0, lam, s0,
+            truncate_by_s0=False
+        )
+        e_hu = _expected_numbp_for_matching(
+            human_matching, men_ids, women_ids, score_dict, beta0, lam, s0,
+            truncate_by_s0=True
+        )
 
         rows.append({"group": gid, "Ebp_AI": e_ai, "Ebp_Human": e_hu})
 

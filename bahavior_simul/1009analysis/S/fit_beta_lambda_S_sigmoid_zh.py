@@ -23,7 +23,7 @@ for p in [ANALYSIS_DIR, REPO_ROOT]:
     if p not in sys.path:
         sys.path.insert(0, p)
 
-from load_data import load_all_group_data_for_model, load_source_scores  # noqa: E402
+from load_data import load_all_group_data_for_model, load_source_scores  
 from config import config as CONFIG  # noqa: E402
 
 # ---------- 数值稳定版 sigmoid ----------

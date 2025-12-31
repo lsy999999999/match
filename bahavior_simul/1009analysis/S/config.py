@@ -12,9 +12,9 @@ config = {
     "gpt4_zh_fitting": {
         "label": "GPT-4 (Chinese)",       # 图表中的英文标签
         "num_groups": 50,                 # 请根据你的实际有效组数修改
-        "base_path": "/home/lsy/match/bahavior_simul/0629_gpt_Chinese",
-        "csv_template": "0629_gpt4_Chinese_group{group_id}.csv",
-        "json_template": "0629_gpt4_Chinese_group{group_id}.json",
+        "base_path": "/home/lsy/match/bahavior_simul/1021_gpt_Chinese",
+        "csv_template": "1021_gpt4_Chinese_group{group_id}.csv",
+        "json_template": "1021_gpt4_Chinese_group{group_id}.json",
     },
     
     # 新增一个配置项，对应上面的 python 脚本生成的数据

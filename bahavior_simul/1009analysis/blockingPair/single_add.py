@@ -17,11 +17,11 @@ import pandas as pd
 
 # ================= 配置路径 =================
 # 参数文件（包含 beta0_taken, lambda_taken, s0）
-PARAMS_JSON = "/home/lsy/match/bahavior_simul/1009analysis/unified_params_gpt4_zh_fitting.json"
+PARAMS_JSON = "/home/lsy/match/bahavior_simul/1009analysis/unified_params_gpt4_en_fitting.json"
 # AI 匹配结果文件夹
-MATCH_DIR   = "/home/lsy/match/bahavior_simul/1022_gpt_Chinese"
+MATCH_DIR   = "/home/lsy/match/bahavior_simul/0627_gpt4_eng"
 # 结果输出路径
-OUTPUT_CSV  = "/home/lsy/match/bahavior_simul/1009analysis/single_choose/Ebp_with_S0_logic_1022_gpt_zh.csv"
+OUTPUT_CSV  = "/home/lsy/match/bahavior_simul/1009analysis/single_choose/Ebp_with_S0_logic_0627_gpt_en.csv"
 # ===========================================
 
 
